@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CORE</title>
+
+  <!-- Material Web (M3) -->
+  <script type="module" src="https://unpkg.com/@material/web@latest/all.js?module"></script>
+  <link rel="stylesheet" href="https://unpkg.com/@material/web@latest/tokens/typography.css">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,400..800&family=Material+Symbols+Rounded:FILL@0..1&display=swap" rel="stylesheet"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}">
+  <link rel="stylesheet" href="{{ url_for('static',  filename='css/style_rail_fix.css') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}">
+
+  <!-- Ajustes puntuales: tipografías M3 y centrado de iconos en botones -->
+  <style>
+    :root{
+      --md-ref-typeface-plain: "Roboto Flex", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+    }
+    .md3-xl-pill{
+      --md-filled-button-icon-size: 24px;
+      --md-outlined-button-icon-size: 24px;
+      --md-tonal-button-icon-size: 24px;
+      --md-elevated-button-icon-size: 24px;
+
+      --md-filled-button-container-height: 56px;
+      --md-outlined-button-container-height: 56px;
+      --md-tonal-button-container-height: 56px;
+      --md-elevated-button-container-height: 56px;
+      --md-text-button-container-height: 56px;
+
+      font-size: 1.125rem;
+      font-weight: 600;
+      min-width: 240px;
+      padding-inline: 24px;
+      border-radius: 9999px;
+    }
+    md-filled-button md-icon,
+    md-outlined-button md-icon,
+    md-tonal-button md-icon,
+    md-elevated-button md-icon{
+      display:inline-flex; align-items:center; justify-content:center; vertical-align:middle;
+    }
+  </style>
+</head>
+<body class="m3-body use-rail bg-aurora-grid">
+    
+  <aside class="side-nav" role="navigation">
+  <div class="nav-logo">
+    <img src="static/assets/logo.svg" alt="" />
+  </div>
+
+  <a class="nav-item" href="#hero">
+    <md-icon class="material-symbols-rounded">home</md-icon><span>Home</span>
+  </a>
+
+  <a class="nav-item" href="#dashboard">
+    <md-icon class="material-symbols-rounded">insights</md-icon><span>Indicadores</span>
+  </a>
+
+  <a class="nav-item" href="#funcionamiento">
+    <md-icon class="material-symbols-rounded">code</md-icon><span>Uso</span>
+  </a>
+
+  <a class="nav-item" href="#hints">
+    <md-icon class="material-symbols-rounded">developer_guide</md-icon><span>Guías</span>
+  </a>
+
+  <!-- NUEVOS ENLACES -->
+  <a class="nav-item" href="#testimonios">
+    <md-icon class="material-symbols-rounded">forum</md-icon><span>Testimonios</span>
+  </a>
+
+  <a class="nav-item" href="#equipo">
+    <md-icon class="material-symbols-rounded">memory</md-icon><span>Equipo Tec.</span>
+  </a>
+
+  <a class="nav-item" href="#metricas">
+    <md-icon class="material-symbols-rounded">analytics</md-icon><span>Métricas</span>
+  </a>
+
+  <a class="nav-item" href="#faq">
+    <md-icon class="material-symbols-rounded">help</md-icon><span>FAQ</span>
+  </a>
+
+  <a class="nav-item" href="#prueba">
+    <md-icon class="material-symbols-rounded">play_circle</md-icon><span>Prueba</span>
+  </a>
+
+  <div class="nav-spacer"></div>
+
+  <button class="nav-item ghost" id="rail-theme-toggle" type="button">
+    <md-icon class="material-symbols-rounded">dark_mode</md-icon><span>Tema</span>
+  </button>
+</aside>
+
+
+  <!-- APP BAR -->
+  <md-top-app-bar class="appbar" sticky>
+    <div slot="navigationIcon" class="brand-wrap">
+      <img class="brand-logo" src="static/assets/core.svg" alt="CORE"/>
+      <span class="brand-title">CORE</span>
+    </div>
+    <div slot="headline"></div>
+    <div slot="actions" class="nav-actions">
+      <a class="nav-link" href="#dashboard">Estadísticas</a>
+      <a class="nav-link" href="#funcionamiento">Cómo funciona</a>
+      <a class="nav-link" href="#contenedores">Contenedores</a>
+      <a class="nav-link" href="#hints">Guías</a>
+      <a class="nav-link cta" href="#prueba">Prueba</a>
+      <md-switch id="theme-switch" icons selected aria-label="Alternar tema"></md-switch>
+    </div>
+  </md-top-app-bar>
+
+<div class="with-rail">
+
+  <main>
+    <!-- HERO (limpio, sin chips ni accesos rápidos) -->
+    <section id="hero" class="section container">
+      <div class="hero-grid">
+        <md-elevated-card class="hero-copy-card" data-reveal>
+          <div class="hero-copy">
+            <h1 class="display">Detección temprana, explicable y rápida</h1>
+            <p class="body">Analizamos mamografías con modelos de última generación (Faster R-CNN/Detectron2), generando visualizaciones claras que apoyan el diagnóstico.</p>
+          </div>
+        </md-elevated-card>
+
+        <md-elevated-card class="hero-card" data-reveal>
+          <img src="static/assets/logo.svg" alt="Visualización del modelo" />
+        </md-elevated-card>
+      </div>
+    </section>
+
+    <!-- DASHBOARD (tarjetas con el mismo estilo de “hint-card”) -->
+    <section id="dashboard" class="section container">
+      <md-filled-tonal-card class="section-head-card" data-reveal>
+        <div class="section-head">
+          <h2 class="title">Indicadores clave</h2>
+          <p class="body">Tendencias de adopción, confianza y uso de IA en salud (datos demo).</p>
+        </div>
+      </md-filled-tonal-card>
+    <!-- Indicadores clave -->
+    <div class="section-grid">
+        <md-outlined-card class="micro-card span-4" data-reveal>
+            <div class="micro-head">
+                <h3 class="micro-title">Aceptación IA en salud (LatAm)</h3>
+            </div>
+            <canvas id="chart1" height="200"></canvas>
+        </md-outlined-card>
+
+        <md-outlined-card class="micro-card span-4" data-reveal>
+            <div class="micro-head">
+                <h3 class="micro-title">Inversión IA médica</h3>
+            </div>
+            <canvas id="chart2" height="200"></canvas>
+        </md-outlined-card>
+
+        <md-outlined-card class="micro-card span-4" data-reveal>
+            <div class="micro-head">
+                <h3 class="micro-title">Adopción sector sanitario</h3>
+            </div>
+            <canvas id="chart3" height="200"></canvas>
+        </md-outlined-card>
+
+        <!-- Ahora ocupa todo el ancho -->
+        <!-- Influencia en decisiones (10 años): ocupa todo el ancho -->
+        <md-outlined-card class="micro-card span-12" data-reveal>
+            <div class="micro-head">
+                <h3 class="micro-title">Influencia en decisiones (10 años)</h3>
+            </div>
+            <canvas id="chart4" height="200"></canvas>
+        </md-outlined-card>
+    </div>
+    </section>
+
+   <!-- CÓMO FUNCIONA -->
+<section id="funcionamiento" class="section container">
+  <md-filled-tonal-card class="section-head-card" data-reveal>
+    <div class="section-head">
+      <h2 class="title">Cómo funciona</h2>
+      <p class="body">Pipeline de extremo a extremo con explicabilidad integrada.</p>
+    </div>
+  </md-filled-tonal-card>
+
+  <div class="how-grid">
+    <!-- Paso 1 -->
+    <md-elevated-card class="how-card hsplit span-4" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/import.svg') }}" alt="Subir imagen" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">1. Subir imagen</h3>
+          <p class="how-text">Selecciona una mamografía (JPG/PNG).</p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- Paso 2 -->
+    <md-elevated-card class="how-card hsplit span-4" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/sliders-solid-full.svg') }}" alt="Preprocesamiento" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">2. Preprocesamiento</h3>
+          <p class="how-text">Normalización y ajustes para inferencia.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- Paso 3 -->
+    <md-elevated-card class="how-card hsplit span-4" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/brain-solid-full.svg') }}" alt="Inferencia" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">3. Inferencia</h3>
+          <p class="how-text">Detección con Faster R-CNN/Detectron2.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- Paso 4 -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/eye-solid-full.svg') }}" alt="Visualización" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">4. Visualización</h3>
+          <p class="how-text">Comparación: Original / GT / Inferida.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- Paso 5 -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/file-arrow-down-solid-full.svg') }}" alt="Descarga" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">5. Descarga</h3>
+          <p class="how-text">Guarda y comparte con el especialista.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+  </div>
+</section>
+
+
+  <!-- TESTIMONIOS -->
+<section id="testimonios" class="section container">
+  <md-filled-tonal-card class="section-head-card" data-reveal>
+    <div class="section-head">
+      <h2 class="title">Testimonios</h2>
+      <p class="body">Opiniones sobre la experiencia de uso y el impacto clínico.</p>
+    </div>
+  </md-filled-tonal-card>
+
+  <div class="section-grid">
+    <md-outlined-card class="micro-card span-4 testi-card" data-reveal>
+      <div class="testi-head">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/heart.svg') }}" alt="Dra. Martínez" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div>
+          <h3 class="testi-name">Dra.Sabala Mandala </h3>
+          <p class="testi-role">Jefa en Radiología • Estados Unidos</p>
+        </div>
+      </div>
+      <p class="testi-text">"Si los algoritmos de IA funcionan como prometen, y estoy seguro de 
+        que la tecnología mejorará con el tiempo, esto marcará una diferencia 
+        fundamental en el tratamiento del cáncer de mama"</p>
+    </md-outlined-card>
+
+    <md-outlined-card class="micro-card span-4 testi-card" data-reveal>
+      <div class="testi-head">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/heart.svg') }}" alt="Dr. López" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div>
+          <h3 class="testi-name">National Library of Medicine</h3>
+          <p class="testi-role">NIH . Estados Unidos</p>
+        </div>
+      </div>
+      <p class="testi-text">"Con apoyo de IA, los radiólogos generales alcanzan un desempeño similar al de los especialistas, lo que abre oportunidades en países con escasez de expertos en mama."</p>
+    </md-outlined-card>
+
+    <md-outlined-card class="micro-card span-4 testi-card" data-reveal>
+      <div class="testi-head">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/heart.svg') }}" alt="Lic. Herrera" loading="lazy"
+               onerror="this.src='{{ url_for('static', filename='assets/placeholder.jpg') }}'">
+        </div>
+        <div>
+          <h3 class="testi-name">Dr. Christopher Sharp</h3>
+          <p class="testi-role">Director de información médica en Stanford Health Care</p>
+        </div>
+      </div>
+      <p class="testi-text">“La meta no es solo mejorar la relación interpersonal, sino abordar el agotamiento
+         causado por las tareas administrativas que afectan a los médicos”</p>
+    </md-outlined-card>
+  </div>
+</section>
+
+<!-- GUÍAS RÁPIDAS -->
+<section id="hints" class="section container">
+  <md-filled-tonal-card class="section-head-card" data-reveal>
+    <div class="section-head">
+      <h2 class="title">Guías rápidas</h2>
+      <p class="body">Apoyo educativo (la lectura clínica final corresponde al profesional).</p>
+    </div>
+  </md-filled-tonal-card>
+
+  <div class="section-grid">
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="assets/teta01.png" alt="Hallazgo benigno" loading="lazy"
+               onerror="this.src='static/assets/teta01.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">Hallazgo benigno</h3>
+          <p class="micro-text">Contornos regulares y márgenes definidos.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="assets/teta02.png" alt="Sospechoso" loading="lazy"
+               onerror="this.src='static/assets/teta02.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">Sospechoso</h3>
+          <p class="micro-text">Masa irregular/espiculada, calcificaciones pleomórficas.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="assets/teta03.png" alt="Factores de riesgo" loading="lazy"
+               onerror="this.src='static/assets/teta03.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">Factores de riesgo</h3>
+          <p class="micro-text">Edad, BRCA1/2, densidad alta; hábitos.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="assets/teta04.png" alt="Prevención" loading="lazy"
+               onerror="this.src='static/assets/teta04.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">Atención temprana</h3>
+          <p class="micro-text">Consulta ante bulto, piel de naranja, retracción o secreción.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+  </div>
+</section>
+
+<!-- EQUIPO / TECNOLOGÍA -->
+<section id="equipo" class="section container">
+  <md-filled-tonal-card class="section-head-card" data-reveal>
+    <div class="section-head">
+      <h2 class="title">Equipo & Tecnología</h2>
+      <p class="body">Stack técnico y herramientas que potencian el proyecto.</p>
+    </div>
+  </md-filled-tonal-card>
+
+  <div class="section-grid">
+    <!-- Usa exactamente la misma estructura que en Guías rápidas -->
+    <md-outlined-card class="hint-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/tech/nvidia-gpu.jpg" alt="NVIDIA GPU" loading="lazy"
+               onerror="this.src='static/assets/cuda.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">NVIDIA GPU</h3>
+          <p class="micro-text">Aceleración CUDA; inferencia &lt; 1s/imagen.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/Meta.png" alt="Flask + Waitress" loading="lazy"
+               onerror="this.src='static/assets/Meta.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">Detectron2</h3>
+          <p class="micro-text">Framework de detección de objetos, entrenamiento y evaluación.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/faster.png" alt="Faster R-CNN" loading="lazy"
+               onerror="this.src='static/assets/faster.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">Faster R-CNN</h3>
+          <p class="micro-text">Detector base del sistema.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/retinanet.png" alt="RetinaNet" loading="lazy"
+               onerror="this.src='static/assets/retinanet.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">RetinaNET</h3>
+          <p class="micro-text">Detección de objetos.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/openai.png" alt="U-Net" loading="lazy"
+               onerror="this.src='static/assets/openai.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">Chatbot con OpenAI</h3>
+          <p class="micro-text">Powered by ChatGPT.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-3" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/wsl.png" alt="WSL2 / Linux" loading="lazy"
+               onerror="this.src='static/assets/wsl.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">WSL2 / Linux</h3>
+          <p class="micro-text">Entorno de desarrollo.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-4" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/cancer.png" alt="CBIS-DDSM" loading="lazy"
+               onerror="this.src='static/assets/cancer.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">CBIS-DDSM</h3>
+          <p class="micro-text">Casos curados de mamografías.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-4" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/biotec.png" alt="INbreast" loading="lazy"
+               onerror="this.src='static/assets/biotec.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">INbreast</h3>
+          <p class="micro-text">Anotaciones detalladas.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+
+    <md-outlined-card class="hint-card hsplit span-4" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="static/assets/mias.png" alt="MIAS" loading="lazy"
+               onerror="this.src='static/assets/mias.png'">
+        </div>
+        <div class="tile-text">
+          <h3 class="micro-title">MIAS</h3>
+          <p class="micro-text">Conjunto clásico de mamografías.</p>
+        </div>
+      </div>
+    </md-outlined-card>
+  </div>
+</section>
+
+<!-- MÉTRICAS DEL MODELO -->
+<section id="metricas" class="section container">
+  <md-filled-tonal-card class="section-head-card" data-reveal>
+    <div class="section-head">
+      <h2 class="title">Métricas del modelo</h2>
+      <p class="body">Rendimiento global (demo) y tiempos de respuesta.</p>
+    </div>
+  </md-filled-tonal-card>
+
+  <div class="section-grid">
+    <md-outlined-card class="micro-card span-4" data-reveal>
+      <div class="micro-head"><h3 class="micro-title">Precisión / Recall / mAP</h3></div>
+      <canvas id="chart-prmap" height="200"></canvas>
+    </md-outlined-card>
+
+    <md-outlined-card class="micro-card span-4" data-reveal>
+      <div class="micro-head"><h3 class="micro-title">Latencia de inferencia (ms)</h3></div>
+      <canvas id="chart-latency" height="200"></canvas>
+    </md-outlined-card>
+
+    <md-outlined-card class="micro-card span-4" data-reveal>
+      <div class="micro-head"><h3 class="micro-title">Distribución de confianza</h3></div>
+      <canvas id="chart-confidence" height="200"></canvas>
+    </md-outlined-card>
+  </div>
+</section>
+
+<!-- PRUEBA DE FUEGO -->
+    <section id="prueba" class="section container">
+      <md-filled-tonal-card class="section-head-card" data-reveal>
+        <div class="section-head">
+          <h2 class="title">Prueba de fuego</h2>
+          <p class="body">Sube una mamografía y analiza el resultado con IA.</p>
+        </div>
+      </md-filled-tonal-card>
+
+      <md-elevated-card class="upload-card" data-reveal>
+        <md-linear-progress id="progress" indeterminate closed></md-linear-progress>
+
+        <form id="upload-form" enctype="multipart/form-data" class="upload-form">
+          <input type="file" name="file" id="file" accept=".jpg,.jpeg,.png" hidden />
+
+          <div class="btn-row" role="group" aria-label="Acciones de prueba">
+            <md-filled-button id="pick-image" class="md3-xl-pill" type="button">
+              <md-icon slot="icon" class="material-symbols-rounded">upload</md-icon>
+              Seleccionar imagen
+            </md-filled-button>
+
+            <md-filled-button id="btn-submit" class="md3-xl-pill" type="submit" disabled>
+              <md-icon slot="icon" class="material-symbols-rounded">play_arrow</md-icon>
+              Analizar
+            </md-filled-button>
+
+            <md-outlined-button id="btn-clear" class="md3-xl-pill" type="button">
+              <md-icon slot="icon" class="material-symbols-rounded">refresh</md-icon>
+              Reset
+            </md-outlined-button>
+          </div>
+
+          <div class="status" id="upload-status" aria-live="polite"></div>
+        </form>
+
+        <div class="results-grid" id="results" style="display:none;">
+          <md-filled-tonal-card class="thumb">
+            <h4>Original</h4>
+            <img id="img-original" alt="Original"/>
+          </md-filled-tonal-card>
+          <md-filled-tonal-card class="thumb">
+            <h4>Inferida</h4>
+            <img id="img-infer" alt="Inferida"/>
+          </md-filled-tonal-card>
+        </div>
+
+        <div id="pred-container" class="pred-card" style="display:none;">
+          <div class="_skin" aria-hidden="true"></div>
+          <div class="pred-head">
+            <h3>Detecciones</h3>
+            <md-icon class="material-symbols-rounded" aria-hidden="true">analytics</md-icon>
+          </div>
+          <ul id="pred-list" class="pred-list"></ul>
+        </div>
+      </md-elevated-card>
+    </section>
+  </main>
+
+<!-- FAQ -->
+<section id="faq" class="section container">
+  <md-filled-tonal-card class="section-head-card" data-reveal>
+    <div class="section-head">
+      <h2 class="title">Preguntas frecuentes</h2>
+      <p class="body">Dudas clave sobre el sistema y su aplicación.</p>
+    </div>
+  </md-filled-tonal-card>
+
+  <div class="section-grid">
+    <!-- Pregunta 1 -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media placeholder">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 
+                     1.79-4 4 1.79 4 4 4zm0 2c-2.67 
+                     0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">¿Este sistema reemplaza al radiólogo?</h3>
+          <p class="how-text">No. Es un apoyo para resaltar hallazgos sospechosos, pero la decisión clínica final corresponde siempre al especialista.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- Pregunta 2 -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media placeholder">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 
+                     15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">¿El sistema da un diagnóstico definitivo?</h3>
+          <p class="how-text">No. Genera predicciones probabilísticas que ayudan a priorizar estudios, pero no sustituyen el diagnóstico médico.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- Pregunta 3 -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media placeholder">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+            <path d="M3 5v14h18V5H3zm16 12H5V7h14v10z"/>
+          </svg>
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">¿De dónde provienen los datos usados?</h3>
+          <p class="how-text">Se entrenó con conjuntos públicos validados: CBIS-DDSM, INbreast y MIAS, garantizando diversidad y rigor científico.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- Pregunta 4 -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media placeholder">
+          <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+            <path d="M19 3H5c-1.1 0-2 .9-2 
+                     2v14c0 1.1.9 2 2 
+                     2h14c1.1 0 2-.9 
+                     2-2V5c0-1.1-.9-2-2-2zm-8 
+                     14H7v-2h4v2zm6-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+          </svg>
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">¿Está listo para integrarse en hospitales?</h3>
+          <p class="how-text">Actualmente es un demo de investigación. Para uso clínico requiere validación regulatoria (FDA, CE) y pilotos hospitalarios.</p>
+        </div>
+      </div>
+    </md-elevated-card>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container footer-grid">
+    <md-elevated-card class="f-col">
+      <div class="brand-wrap">
+        <img class="brand-logo" src="static/assets/core.svg" alt="CORE" />
+        <span class="brand-title"></span>
+      </div>
+      <small>© 2025 CORE · Todos los derechos reservados</small>
+      <div class="socials" aria-label="Redes sociales">
+        <a href="https://github.com/caleb-bvm/breast_cancer_detection" target="_blank" rel="noopener">
+          <md-icon class="material-symbols-rounded">code</md-icon> GitHub
+        </a>
+        <a href="mailto:contacto@core.ai">
+          <md-icon class="material-symbols-rounded">mail</md-icon> Correo
+        </a>
+        <a href="#hero">
+          <md-icon class="material-symbols-rounded">home</md-icon> Inicio
+        </a>
+      </div>
+    </md-elevated-card>
+
+    <md-elevated-card class="f-col f-links">
+      <a href="#dashboard">Indicadores</a>
+      <a href="#funcionamiento">Cómo funciona</a>
+      <a href="#hints">Guías rápidas</a>
+      <a href="#prueba">Prueba de fuego</a>
+      <a href="#testimonios">Testimonios</a>
+      <a href="#equipo">Equipo & Tecnología</a>
+      <a href="#metricas">Métricas</a>
+    </md-elevated-card>
+
+    <md-elevated-card class="f-col">
+      <p><strong>Privacidad</strong></p>
+      <small>Este demo no almacena imágenes subidas; se procesan en memoria.</small>
+    </md-elevated-card>
+  </div>
+</footer>
+
+</div>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='js/script.js') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}"></script>
+  <script src="{{ url_for('static', filename='js/rail.js') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}"></script>
+  <script src="{{ url_for('static', filename='js/rail_theme_fix.js') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}"></script>
+
+  <script type="module">
+    // Elements
+    const fileInput     = document.getElementById('file');
+    const pickBtn       = document.getElementById('pick-image');
+    const submitBtn     = document.getElementById('btn-submit');
+    const clearBtn      = document.getElementById('btn-clear');
+    const form          = document.getElementById('upload-form');
+    const progress      = document.getElementById('progress');
+    const statusEl      = document.getElementById('upload-status');
+    const resultsGrid   = document.getElementById('results');
+    const imgOrig       = document.getElementById('img-original');
+    const imgInfer      = document.getElementById('img-infer');
+    const predContainer = document.getElementById('pred-container');
+    const predList      = document.getElementById('pred-list');
+
+    // Abrir selector de archivos
+    pickBtn?.addEventListener('click', () => fileInput.click());
+
+    // Cuando elige archivo
+    fileInput?.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length) {
+        submitBtn.disabled = false;
+        statusEl.textContent = 'Listo para analizar.';
+      } else {
+        submitBtn.disabled = true;
+        statusEl.textContent = '';
+      }
+    });
+
+    // Reset
+    clearBtn?.addEventListener('click', () => {
+      form.reset();
+      submitBtn.disabled = true;
+      statusEl.textContent = '';
+      resultsGrid.style.display = 'none';
+      predContainer.style.display = 'none';
+    });
+
+    // Enviar (analizar)
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!fileInput.files?.length) return;
+
+      // UI: bloquear y mostrar progreso
+      submitBtn.disabled = true;
+      pickBtn.disabled = true;
+      clearBtn.disabled = true;
+      progress.closed = false;
+      progress.indeterminate = true;
+      statusEl.textContent = 'Analizando imagen…';
+
+      try {
+        // TODO: integra tu endpoint real aquí
+        // const fd = new FormData(form);
+        // const resp = await fetch('/predict', { method: 'POST', body: fd });
+        // const data = await resp.json();
+
+        // Demo local:
+        const url = URL.createObjectURL(fileInput.files[0]);
+        imgOrig.src = url;
+        imgInfer.src = url;
+        predList.innerHTML = `
+          <li>Prob. lesión 0.87 — Caja: [x1,y1,x2,y2]</li>
+          <li>Prob. calcificación 0.42 — Caja: [x1,y1,x2,y2]</li>
+        `;
+        resultsGrid.style.display = '';
+        predContainer.style.display = '';
+        statusEl.textContent = 'Análisis completado.';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Ocurrió un error durante el análisis.';
+      } finally {
+        progress.closed = true;
+        progress.indeterminate = false;
+        pickBtn.disabled = false;
+        clearBtn.disabled = false;
+        submitBtn.disabled = !fileInput.files?.length;
+      }
+    });
+
+    // Tema
+    const themeSwitch = document.getElementById('theme-switch');
+    const root = document.documentElement;
+    const setTheme = (dark) => root.setAttribute('data-theme', dark ? 'dark' : 'light');
+    themeSwitch?.addEventListener('change', (ev) => setTheme(ev.target.selected));
+    setTheme(themeSwitch?.selected ?? false);
+  </script>
+</body>
+</html>
+

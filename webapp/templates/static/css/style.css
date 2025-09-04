@@ -1,0 +1,1305 @@
+/* ===== Material 3 · base ===== */
+/* ===== PALETA DE COLORES — MODO CLARO ===== */
+/* ===== PALETA DE COLORES — MODO CLARO (nueva) ===== */
+:root[data-theme="light"] {
+  --md-sys-color-primary: #B3261E;       /* rojo */
+  --md-sys-color-on-primary: #FFFFFF;
+  --md-sys-color-primary-container: #FFB4A9;
+  --md-sys-color-on-primary-container: #601410;
+
+  --md-sys-color-secondary: #9C27B0;    /* púrpura */
+  --md-sys-color-on-secondary: #FFFFFF;
+  --md-sys-color-secondary-container: #F3B5FF;
+  --md-sys-color-on-secondary-container: #37003C;
+
+  --md-sys-color-tertiary: #00695C;     /* verde */
+  --md-sys-color-on-tertiary: #FFFFFF;
+  --md-sys-color-tertiary-container: #66D7C0;
+  --md-sys-color-on-tertiary-container: #003730;
+
+  --md-sys-color-error: #B3261E;
+  --md-sys-color-on-error: #FFFFFF;
+  --md-sys-color-error-container: #F9DEDC;
+  --md-sys-color-on-error-container: #410E0B;
+
+  --md-sys-color-background: #FFFBFE;
+  --md-sys-color-on-background: #1C1B1F;
+
+  --md-sys-color-surface: #FFFBFE;
+  --md-sys-color-on-surface: #1C1B1F;
+
+  --md-sys-color-outline: #79747E;
+}
+
+
+/* ===== PALETA DE COLORES — MODO OSCURO (propuesta radical) ===== */
+:root[data-theme="dark"] {
+  --md-sys-color-primary: #00E0A1;       /* verde aqua neón */
+  --md-sys-color-on-primary: #00251A;
+  --md-sys-color-primary-container: #004D40;
+  --md-sys-color-on-primary-container: #8FFFE0;
+
+  --md-sys-color-secondary: #FF6BC8;     /* fucsia brillante */
+  --md-sys-color-on-secondary: #3A0030;
+  --md-sys-color-secondary-container: #5A0048;
+  --md-sys-color-on-secondary-container: #FFD6F0;
+
+  --md-sys-color-tertiary: #4DD0FF;      /* celeste eléctrico */
+  --md-sys-color-on-tertiary: #002233;
+  --md-sys-color-tertiary-container: #00344D;
+  --md-sys-color-on-tertiary-container: #B9EAFF;
+
+  --md-sys-color-error: #FF5C5C;
+  --md-sys-color-on-error: #3A0000;
+  --md-sys-color-error-container: #640000;
+  --md-sys-color-on-error-container: #FFDAD4;
+
+  --md-sys-color-background: #0D0F1A;    /* casi negro azulado */
+  --md-sys-color-on-background: #E9ECF5;
+
+  --md-sys-color-surface: #121426;       /* superficie azul profundo */
+  --md-sys-color-on-surface: #F1F3FA;
+
+  --md-sys-color-outline: #2E3148;
+}
+
+
+
+body.m3-body{
+  margin:0;
+  font-family:"Roboto Flex",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:linear-gradient(180deg,#faf7fb 0%,#ffffff 18%,#fafafa 100%);
+  color:rgb(33 33 33);
+  letter-spacing:.2px;
+}
+
+/* App bar */
+.appbar{ border-bottom:1px solid rgba(0,0,0,.06); height:68px; align-items:center; }
+.brand-wrap{ display:flex; align-items:center; gap:.5rem; padding-inline:.25rem; }
+.brand-logo{ width:32px; height:32px; border-radius:10px; object-fit:contain; }
+.brand-title{ font-weight:800; letter-spacing:.3px; }
+.nav-actions{ display:flex; gap:.25rem; align-items:center; }
+.nav-link{ text-decoration:none; color:inherit; padding:.45rem .9rem; border-radius:999px; font-weight:600; }
+.nav-link:hover{ background:rgba(0,0,0,.04); }
+.nav-link.cta{ background:var(--md-sys-color-primary,#6750A4); color:var(--md-sys-color-on-primary,#fff); }
+
+/* Layout */
+.container{ max-width:var(--maxw); margin-inline:auto; padding:28px 18px; }
+.section{ padding:52px 0; }
+
+.section-head{ margin:0; }
+.display{ font-size:clamp(36px,6vw,64px); line-height:1.02; font-weight:800; margin:0 0 6px; }
+.title{ font-size:clamp(22px,2.2vw,32px); line-height:1.05; font-weight:800; margin:0; }
+.body{ margin:0; opacity:.85; }
+
+/* Hero */
+.hero-grid{ display:grid; grid-template-columns:1.05fr .95fr; gap:var(--gap); align-items:center; }
+.hero-copy-card{ padding:20px; border-radius:var(--radius-lg); }
+.hero-chips{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px; }
+.hero-filters{ display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+.hero-cta{ display:flex; gap:.5rem; flex-wrap:wrap; margin-top:10px; }
+.hero-cta.split{ align-items:center; }
+.hero-card{ width:100%; min-height:420px; display:grid; place-items:center; overflow:hidden; border-radius:var(--radius-lg); }
+.hero-card img{ width:100%; height:100%; object-fit:cover; transform:scale(1.02); }
+
+/* Section header card */
+.section-head-card{ margin-bottom:calc(var(--gap) + 4px); padding:14px 16px; border-radius:var(--radius-lg); }
+
+/* Micro-cards grid */
+.section-grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:var(--gap); }
+.micro-card{
+  padding:16px;
+  border-radius:var(--radius-lg);
+  outline:1px solid color-mix(in oklab, var(--md-sys-color-outline, #000), transparent 70%);
+  background:color-mix(in oklab, var(--md-sys-color-surface, #fff), var(--md-sys-color-primary, #6750A4) 2%);
+  transition:transform .18s ease, box-shadow .18s ease, outline-color .18s ease, background .18s ease;
+  display:grid; gap:6px;
+}
+.micro-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--elev);
+  outline-color:color-mix(in oklab, var(--md-sys-color-primary, #6750A4), transparent 60%);
+  background:color-mix(in oklab, var(--md-sys-color-surface, #fff), var(--md-sys-color-primary, #6750A4) 4%);
+}
+.micro-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.micro-title{ margin:0; font-weight:800; font-size:clamp(16px,1.7vw,22px); }
+.micro-text{ margin:6px 0 0; opacity:.9; }
+.micro-placeholder{ min-height:100%; }
+.center{ text-align:center; }
+.step-icon{ font-family:"Material Symbols Rounded"; font-size:40px; line-height:40px; margin:8px auto 10px; color:var(--md-sys-color-primary,#6750A4); }
+
+/* Spans (12 columns) */
+.span-2{ grid-column:span 2 / span 2; }
+.span-3{ grid-column:span 3 / span 3; }
+.span-4{ grid-column:span 4 / span 4; }
+.span-8{ grid-column:span 8 / span 8; }
+
+/* Charts & results */
+.micro-card canvas{ width:100%; height:auto; }
+.upload-card{ padding:12px; border-radius:var(--radius-lg); }
+.upload-form{ display:grid; gap:8px; }
+.inputs-row{ display:flex; flex-wrap:wrap; align-items:flex-end; gap:10px; }
+.split-actions{ display:flex; gap:6px; align-items:center; }
+.status{ min-height:20px; font-size:.95rem; opacity:.9; }
+
+.results-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:10px; }
+.thumb{ padding:14px; border-radius:var(--radius-lg); }
+.thumb h4{ margin:0 0 6px; font-weight:700; }
+.thumb img{ width:100%; height:360px; object-fit:contain; background:#fff; border-radius:14px; }
+
+.pred-card{ margin-top:12px; padding:10px; }
+.pred-head{ display:flex; align-items:center; justify-content:space-between; }
+.pred-list{ list-style:none; padding-left:0; margin:6px 0 0; display:grid; gap:6px; }
+.pred-list li{
+  background:color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 6%);
+  border-radius:10px; padding:8px 10px; border:1px solid rgba(0,0,0,.06);
+}
+
+/* Containers (mosaico) */
+.containers-section{ padding-top:14px; }
+.containers-grid{ display:grid; grid-template-columns:repeat(12,1fr); gap:12px; }
+.container-card{
+  grid-column:span 4 / span 4;
+  display:grid; grid-template-rows:auto 1fr;
+  border-radius:16px; overflow:clip;
+  outline:1px solid rgba(0,0,0,.06);
+  transition:transform .18s ease, box-shadow .18s ease, outline-color .18s ease;
+}
+.container-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 30px color-mix(in oklab,#000,transparent 88%);
+  outline-color:color-mix(in oklab,var(--md-sys-color-primary,#6750A4),transparent 70%);
+}
+.container-card.span-2{ grid-column:span 8 / span 8; }
+.cc-thumb{ aspect-ratio:16/6; display:grid; place-items:center; background:color-mix(in oklab,var(--md-sys-color-surface,#fff),var(--md-sys-color-primary,#6750A4) 6%); border-bottom:1px solid rgba(0,0,0,.06); }
+.cc-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+.cc-thumb.alt{ aspect-ratio:16/5; }
+.cc-body{ padding:12px; display:grid; gap:6px; align-content:start; }
+.cc-chips{ display:flex; gap:6px; flex-wrap:wrap; }
+.cc-title{ margin:0; font-weight:800; }
+.cc-text{ margin:0; opacity:.85; }
+.cc-cta{ justify-self:start; }
+
+/* Hover suave para M3 cards */
+md-elevated-card:hover, md-filled-tonal-card:hover { transform:translateY(-2px); }
+
+/* Reveal on scroll */
+@keyframes revealUp { from { opacity:0; transform: translateY(10px) scale(.985); } to { opacity:1; transform:none; } }
+[data-reveal]{ opacity:0; transform: translateY(10px) scale(.985); }
+[data-reveal].seen{ animation: revealUp .42s cubic-bezier(.2,.8,.2,1) forwards; }
+
+/* Footer */
+.footer{ padding:22px 0; border-top:1px solid rgba(0,0,0,.06); margin-top:24px; }
+.footer-grid{ display:grid; grid-template-columns:1.2fr .8fr .8fr; gap:12px; align-items:start; }
+.footer a{ color:inherit; opacity:.9; text-decoration:none; }
+.footer a:hover{ text-decoration:underline; }
+.f-col{ padding:18px; border-radius:var(--radius-lg); }
+.f-links{ display:grid; gap:6px; }
+
+/* Dark theme */
+:root[data-theme="dark"] body.m3-body{
+  background:
+    radial-gradient(900px 520px at 8% -10%, #2b2333 0%, transparent 62%),
+    radial-gradient(980px 520px at 95% 12%, #352542 0%, transparent 60%),
+    #121013;
+  color:#f4effa;
+}
+:root[data-theme="dark"] .nav-link:hover{ background:rgba(255,255,255,.08); }
+:root[data-theme="dark"] .micro-card{
+  background: color-mix(in oklab, #1b171d, var(--md-sys-color-primary, #9a82db) 6%);
+  outline-color: rgba(255,255,255,.07);
+}
+:root[data-theme="dark"] .micro-card:hover{
+  background: color-mix(in oklab, #1b171d, var(--md-sys-color-primary, #9a82db) 9%);
+  box-shadow: 0 18px 46px rgba(0,0,0,.55);
+}
+:root[data-theme="dark"] .container-card{ outline-color:rgba(255,255,255,.10); }
+:root[data-theme="dark"] .container-card:hover{ box-shadow:0 14px 36px rgba(0,0,0,.5); }
+
+/* Responsivo */
+@media (max-width:1100px){
+  .hero-grid{ grid-template-columns:1fr; }
+  .span-8{ grid-column:span 12; }
+  .span-4{ grid-column:span 6; }
+  .span-3{ grid-column:span 6; }
+  .span-2{ grid-column:span 6; }
+  .containers-grid .container-card{ grid-column:span 6 / span 6; }
+  .containers-grid .container-card.span-2{ grid-column:span 12 / span 12; }
+  .footer-grid{ grid-template-columns:1fr; }
+}
+@media (max-width:680px){
+  .span-8, .span-4, .span-3, .span-2{ grid-column:span 12; }
+  .containers-grid .container-card{ grid-column:span 12 / span 12; }
+}
+/* ===== Cómo funciona: cards mitad imagen / mitad texto ===== */
+.how-grid{
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--gap, 16px);
+}
+
+.how-card{
+  border-radius: var(--radius-lg, 24px);
+  overflow: clip;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.how-card:hover{
+  transform: translateY(-3px);
+  box-shadow: var(--elev, 0 14px 40px rgba(0,0,0,.14));
+}
+
+/* Layout interno 50/50 vertical (imagen arriba, texto abajo) */
+.hsplit .tile{
+  display: grid;
+  grid-template-rows: 1fr 1fr;       /* 50% / 50% */
+  min-height: 260px;                  /* ajusta a tu gusto */
+  background: var(--md-sys-color-surface, #fff);
+}
+.hsplit .tile-media{
+  position: relative;
+  background: color-mix(in oklab, var(--md-sys-color-surface, #fff),
+                                   var(--md-sys-color-primary, #6750A4) 6%);
+}
+.hsplit .tile-media img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+}
+
+/* Panel de texto (mitad inferior) */
+.hsplit .tile-text{
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  padding: 14px;
+  border-top: 1px solid color-mix(in oklab, var(--md-sys-color-outline, #000), transparent 82%);
+  background: color-mix(in oklab, var(--md-sys-color-surface, #fff), transparent 0%);
+}
+.how-title{
+  margin: 0;
+  font-weight: 800;
+  font-size: clamp(18px, 2vw, 22px);
+}
+.how-text{ margin: 0; opacity: .92; }
+
+/* Spans (12 columnas) para el grid existente */
+.how-card.span-4 { grid-column: span 4 / span 4; }
+.how-card.span-6 { grid-column: span 6 / span 6; }
+
+/* Modo oscuro coherente */
+:root[data-theme="dark"] .hsplit .tile-text{
+  background: color-mix(in oklab, #1b171e, transparent 0%);
+  border-top-color: rgba(255,255,255,.10);
+}
+
+/* Responsivo */
+@media (max-width: 1100px){
+  .how-card.span-4 { grid-column: span 6 / span 6; }
+  .how-card.span-6 { grid-column: span 12 / span 12; }
+}
+@media (max-width: 680px){
+  .how-card.span-4, .how-card.span-6 { grid-column: span 12 / span 12; }
+  .hsplit .tile{ min-height: 220px; }
+}
+
+/* ===== Cómo funciona — doble radio CORRECTO (imagen arriba) ===== */
+:root{
+  --outer-r: 28px;   /* radio EXTERIOR del card */
+  --inner-r: 22px;   /* radio INTERIOR en la unión imagen/texto */
+}
+
+.how-card.hsplit{
+  border-radius: var(--outer-r);
+  overflow: hidden;                          /* recorta al radio exterior */
+  --md-elevated-card-container-shape: var(--outer-r);
+}
+
+.hsplit .tile{
+  display: grid;
+  grid-template-rows: 1fr auto;              /* imagen arriba / texto abajo */
+  min-height: 280px;
+  background: var(--md-sys-color-surface, #fff);
+}
+
+/* IMAGEN (ARRIBA) con radio INTERIOR en borde inferior */
+.hsplit .tile-media{
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/9;
+  margin-bottom: calc(-1 * var(--inner-r));  /* se superpone sobre el texto */
+  border-bottom-left-radius: var(--inner-r);
+  border-bottom-right-radius: var(--inner-r);
+  /* línea divisoria sutil como en M3 */
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--md-sys-color-outline, #000), transparent 82%);
+}
+.hsplit .tile-media img{
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+
+/* TEXTO (ABAJO) sin radio arriba; compensamos el solape con padding extra */
+.hsplit .tile-text{
+  padding: calc(16px + var(--inner-r)) 16px 16px;
+  background: var(--md-sys-color-surface, #fff);
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.how-title{ margin: 0 0 4px; font-weight: 800; font-size: clamp(18px,2vw,22px); }
+.how-text { margin: 0; opacity: .92; }
+
+/* Dark mode coherente */
+:root[data-theme="dark"] .hsplit .tile{
+  background: color-mix(in oklab, #1b171e, transparent 0%);
+}
+:root[data-theme="dark"] .hsplit .tile-media{
+  box-shadow: 0 1px 0 rgba(255,255,255,.10);
+}
+
+/* Responsive opcional */
+@media (max-width: 680px){
+  .hsplit .tile{ min-height: 240px; }
+}
+/* ===== Guías rápidas con doble radio (imagen arriba) ===== */
+.hint-card{
+  border-radius: var(--outer-r, 28px);
+  overflow: hidden;
+}
+
+.hint-card .tile{
+  display: grid;
+  grid-template-rows: auto 1fr;           /* imagen arriba / texto abajo */
+  min-height: 260px;
+  background: var(--md-sys-color-surface, #fff);
+}
+
+.hint-card .tile-media{
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 16/10;
+  margin-bottom: calc(-1 * var(--inner-r, 22px));
+  border-bottom-left-radius: var(--inner-r, 22px);
+  border-bottom-right-radius: var(--inner-r, 22px);
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 82%);
+}
+.hint-card .tile-media img{
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+.hint-card .tile-text{
+  padding: calc(14px + var(--inner-r,22px)) 14px 14px;
+}
+
+.hint-card .hint-chips{
+  margin-bottom: 6px;
+}
+
+/* Dark mode coherente */
+:root[data-theme="dark"] .hint-card .tile{
+  background: color-mix(in oklab,#1b171e,transparent 0%);
+}
+:root[data-theme="dark"] .hint-card .tile-media{
+  box-shadow: 0 1px 0 rgba(255,255,255,.10);
+}
+/* ===== PRUEBA DE FUEGO — Botonera M3 estilo "Large pill" ===== */
+.btn-row{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin: 6px 0 8px;
+}
+
+/* Tamaño y forma "large pill" siguiendo M3 */
+.pill { border-radius: 9999px !important; }
+.md3-lg {
+  --md-filled-button-container-height: 48px;
+  --md-outlined-button-container-height: 48px;
+  --md-tonal-button-container-height: 48px;
+  --md-text-button-container-height: 48px;
+  --md-elevated-button-container-height: 48px;
+  font-size: 1rem;
+  padding-inline: 18px;
+}
+
+/* Estado de archivos seleccionados */
+.file-state{
+  display: flex; gap: 8px; flex-wrap: wrap;
+  margin: 2px 0 6px;
+}
+
+/* Afinado visual del card de subida */
+.upload-card{ padding: 14px; border-radius: var(--radius-lg); }
+
+/* En móviles, que la botonera sea bloque */
+@media (max-width: 680px){
+  .btn-row { flex-direction: column; align-items: stretch; }
+  .btn-row > * { width: 100%; }
+}
+
+/* Botonera “pill XL” al estilo del ejemplo de M3 */
+.btn-row{ display:flex; flex-wrap:wrap; gap:20px; align-items:center; margin:20px 0; }
+
+.md3-xl-pill{
+  --md-filled-button-container-height: 56px;
+  --md-outlined-button-container-height: 56px;
+  --md-tonal-button-container-height: 56px;
+  --md-elevated-button-container-height: 56px;
+  --md-text-button-container-height: 56px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  min-width: 240px;
+  padding-inline: 24px;
+  border-radius: 9999px;
+}
+
+md-outlined-button.md3-xl-pill{
+  --md-outlined-button-outline-width: 2px;
+  --md-outlined-button-outline-color: var(--md-sys-color-primary, #6750A4);
+}
+
+@media (max-width:680px){
+  .btn-row{ flex-direction:column; align-items:stretch; }
+  .btn-row > *{ width:100%; min-width:unset; }
+}
+
+/* 1) Unificar tipografía de Material Web con Roboto Flex */
+:root{
+  --md-ref-typeface-plain: "Roboto Flex", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+}
+
+/* 2) Botones XL: alinear iconos y texto */
+.md3-xl-pill{
+  --md-filled-button-icon-size: 24px;
+  --md-outlined-button-icon-size: 24px;
+  --md-tonal-button-icon-size: 24px;
+  --md-elevated-button-icon-size: 24px;
+  /* mantenemos tu tamaño XL: */
+  --md-filled-button-container-height: 56px;
+  --md-outlined-button-container-height: 56px;
+  --md-tonal-button-container-height: 56px;
+  --md-elevated-button-container-height: 56px;
+  --md-text-button-container-height: 56px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  min-width: 240px;
+  padding-inline: 24px;
+  border-radius: 9999px;
+}
+
+/* Asegura centrado del <md-icon> dentro del botón */
+md-filled-button md-icon,
+md-outlined-button md-icon,
+md-tonal-button md-icon,
+md-elevated-button md-icon{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  vertical-align:middle;
+}
+
+/* Botones MD3 uniformes */
+.md3-xl-pill {
+  font-family: "Roboto Flex", system-ui, sans-serif;  /* FUENTE */
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 8px;                /* espacio entre icono y texto */
+}
+
+/* Outline cards más visibles en modo claro */
+.micro-card, .hint-card, .how-card {
+  outline: 1px solid rgba(0,0,0,.08);
+  background: #fff;
+}
+
+/* Modo oscuro coherente */
+:root[data-theme="dark"] {
+  --md-sys-color-primary: #9a82db;   /* unificamos el acento */
+}
+:root[data-theme="dark"] .micro-card,
+:root[data-theme="dark"] .hint-card,
+:root[data-theme="dark"] .how-card {
+  background: #1d1b20;
+  outline: 1px solid rgba(255,255,255,.08);
+}
+.span-12{ grid-column: span 12 / span 12; }
+
+/* ===== Ajustes de legibilidad para "Detecciones" en modo oscuro ===== */
+:root[data-theme="dark"] .pred-card{
+  /* Eleva un poco el card y oscurece el contenedor */
+  background: #1b171e;
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+:root[data-theme="dark"] .pred-list li{
+  /* Fondo más oscuro y consistente con M3 (superficie + acento) */
+  background: color-mix(in oklab, #0f0d11, var(--md-sys-color-primary, #9a82db) 14%);
+  color: #f6f2fa;                   /* texto claro y nítido */
+  border-color: rgba(255,255,255,.14);
+}
+
+:root[data-theme="dark"] .pred-head h3{
+  color: #f6f2fa;                   /* título más visible */
+}
+
+/* Opcional: que los thumbnails no queden con "cuadro blanco" en dark */
+:root[data-theme="dark"] .thumb img{
+  background: #121013;
+}
+
+/* Opcional: en modo claro, asegura contraste del texto dentro de pills */
+:root:not([data-theme="dark"]) .pred-list li{
+  color: #1b1b1f;
+}
+/* ===== Predicciones: contenedor clásico (sin web-component) ===== */
+.pred-card{
+  border-radius: 16px;
+  border: 2px solid rgba(0,0,0,.18); /* visible en claro */
+  background: #ffffff;               /* fondo claro */
+  box-shadow: none;
+  overflow: hidden;
+}
+
+/* Dark theme: contraste alto y borde visible */
+:root[data-theme="dark"] .pred-card{
+  background: #131116;               /* superficie oscura */
+  border-color: rgba(255,255,255,.28);/* borde más notorio en oscuro */
+}
+
+/* Cabecera dentro del card */
+.pred-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+:root[data-theme="dark"] .pred-head{
+  border-bottom-color: rgba(255,255,255,.12);
+}
+.pred-head h3{ margin:0; }
+
+/* Lista de detecciones (pills) — alto contraste */
+.pred-list{ list-style:none; margin:0; padding:12px; }
+.pred-list li{
+  margin:8px 0; padding:12px 16px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#f7f7fb;
+  color:#1b1b1f;
+}
+:root[data-theme="dark"] .pred-list li{
+  border-color: rgba(255,255,255,.16);
+  background: rgba(255,255,255,.06);
+  color: #ECE6F0;
+}
+
+/* Mata cualquier pseudo-elemento previo */
+.pred-card::before, .pred-card::after,
+.pred-list li::before, .pred-list li::after{ content:none !important; }
+
+/* Hover para mosaicos de Guías rápidas (igual que Cómo funciona) */
+.hint-card {
+  border-radius: var(--radius-lg, 24px);
+  overflow: clip;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.hint-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--elev, 0 14px 40px rgba(0,0,0,.14));
+}
+
+/* === Glow interno en dark para Cómo funciona y Guías rápidas (igual a micro-card) === */
+
+/* Estado base en oscuro: superficie + 6% de primario */
+:root[data-theme="dark"] .how-card .tile,
+:root[data-theme="dark"] .hint-card .tile{
+  background: color-mix(in oklab, #1b171e, var(--md-sys-color-primary, #9a82db) 6%);
+  transition: background .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+
+/* Hover en oscuro: sube a 9% de primario (como micro-card:hover) */
+:root[data-theme="dark"] .how-card:hover .tile,
+:root[data-theme="dark"] .hint-card:hover .tile{
+  background: color-mix(in oklab, #1b171e, var(--md-sys-color-primary, #9a82db) 9%);
+}
+
+/* Refuerzo de elevación en dark para que se perciba igual */
+:root[data-theme="dark"] .how-card:hover,
+:root[data-theme="dark"] .hint-card:hover{
+  box-shadow: 0 18px 46px rgba(0,0,0,.55);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0 20px; /* espacio inferior extra para separar del primer item */
+}
+
+.nav-logo img {
+  width: 48px;   /* ajusta al tamaño que quieras */
+  height: 48px;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+/* ===== Tecnología: variaciones visuales por item ===== */
+.tech-item .tile-media { overflow: hidden; }
+.tech-item .tile-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+/* Aspect ratios utilitarios */
+.ar-1x1  .tile-media{ aspect-ratio: 1 / 1; }
+.ar-4x3  .tile-media{ aspect-ratio: 4 / 3; }
+.ar-16x9 .tile-media{ aspect-ratio: 16 / 9; }
+.ar-21x9 .tile-media{ aspect-ratio: 21 / 9; }
+
+/* Ajuste de texto */
+.tech-item .tile-text{ padding:14px; }
+
+/* Cohesión en oscuro (reusa tu esquema de micro-card) */
+:root[data-theme="dark"] .tech-item .tile{
+  background: color-mix(in oklab, #1b171e, var(--md-sys-color-primary, #9a82db) 6%);
+}
+:root[data-theme="dark"] .tech-item:hover .tile{
+  background: color-mix(in oklab, #1b171e, var(--md-sys-color-primary, #9a82db) 9%);
+}
+
+/* Responsivo para mantener el ritmo del mosaico */
+@media (max-width:1100px){
+  #equipo .span-6{ grid-column: span 12 / span 12; }
+  #equipo .span-4{ grid-column: span 6 / span 6; }
+  #equipo .span-3{ grid-column: span 6 / span 6; }
+}
+@media (max-width:680px){
+  #equipo .span-6,
+  #equipo .span-4,
+  #equipo .span-3{ grid-column: span 12 / span 12; }
+}
+
+
+/* ===== THEME · Paleta MD3 (sin reglas de cards) ===== */
+:root{
+  --primary:#AA4465;
+  --on-primary:#FFFFFF;
+  --primary-container:#FADCF1;
+  --on-primary-container:#5A1A2D;
+
+  --secondary:#EBCAED;
+  --on-secondary:#3D0F22;
+
+  --bg:#F5EFFF;
+  --surface:#FFFFFF;            /* para secciones generales, no-cards */
+  --surface-variant:#F0E1F2;
+  --outline:#DFC2D2;
+
+  --text:#1D1B20;
+  --text-muted:#5C4B55;
+
+  --radius-xl:20px;
+  --radius-lg:16px;
+  --elev-1:0 1px 2px rgba(0,0,0,.05), 0 2px 8px rgba(0,0,0,.06);
+  --elev-2:0 6px 22px rgba(0,0,0,.10);
+  --hover:rgba(170,68,101,.08);
+  --focus:rgba(170,68,101,.20);
+}
+
+/* ===== LAYOUT & TIPOGRAFÍA ===== */
+body, .m3-body{ background:var(--bg); color:var(--text); }
+h1{ font-weight:800; font-size:clamp(28px,3.2vw,40px); letter-spacing:.2px; margin:28px 0 10px; }
+h2{ font-weight:750; font-size:clamp(22px,2.4vw,28px); margin:22px 0 6px; }
+p{ color:var(--text); }
+
+/* ===== App bar / nav ===== */
+.appbar{
+  background:var(--surface);
+  border-bottom:1px solid var(--outline);
+}
+
+/* ===== Pills / filtros (como el screenshot) ===== */
+.pills{ display:flex; gap:10px; flex-wrap:wrap; }
+.pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 14px; border-radius:999px;
+  background:var(--surface-variant);
+  border:1px solid var(--outline);
+  color:var(--text);
+}
+.pill.is-active{
+  background:var(--primary);
+  color:var(--on-primary);
+  border-color:var(--primary);
+}
+.pill:hover{ background:var(--hover); }
+
+/* ===== Botones (Filled / Tonal / Outlined) ===== */
+.btn-primary, md-filled-button{
+  background:var(--primary); color:var(--on-primary);
+  border:1px solid var(--primary); border-radius:14px; padding:10px 16px; font-weight:600;
+}
+.btn-primary:hover, md-filled-button:hover{ filter:brightness(.96); box-shadow:var(--elev-2); }
+
+.btn-tonal, md-filled-tonal-button{
+  background:var(--primary-container); color:var(--on-primary-container);
+  border:1px solid color-mix(in oklab, var(--primary) 30%, white);
+  border-radius:14px; padding:10px 16px; font-weight:600;
+}
+
+.btn-outlined, md-outlined-button{
+  background:transparent; color:var(--primary);
+  border:1px solid var(--primary); border-radius:14px; padding:10px 16px; font-weight:600;
+}
+.btn-outlined:hover{ background:var(--hover); }
+
+/* ===== Inputs ===== */
+input, textarea, select, md-outlined-text-field{
+  background:var(--surface);
+  color:var(--text);
+  border:1px solid var(--outline);
+  border-radius:12px; padding:10px 12px;
+}
+input:focus, textarea:focus, select:focus{
+  outline:3px solid var(--focus);
+  border-color:var(--primary);
+}
+
+/* ===== Links ===== */
+a{ color:var(--primary); }
+a:hover{ background:var(--hover); border-radius:8px; }
+
+/* ===== Utilidades ===== */
+.bg-alt{ background:var(--surface-variant); }
+.text-muted{ color:var(--text-muted); }
+.border{ border:1px solid var(--outline); }
+
+/* ===== Prefer dark: tokens y variaciones tonales ===== */
+@media (prefers-color-scheme: dark){
+  :root{
+    /* Base */
+    --primary:#E7A3B8;                 /* un poco más claro para contraste */
+    --on-primary:#3B0E1C;
+
+    /* Contenedores tonales (más profundos en dark) */
+    --primary-container:#5B2033;       /* ≈ AA4465 oscurecido */
+    --on-primary-container:#FFD8E6;
+
+    --secondary:#CFA5D4;               /* EBCAED tono más bajo */
+    --on-secondary:#2D0B18;
+
+    --bg:#161218;                      /* fondo app */
+    --surface:#1D1720;                 /* superficies generales (no-cards) */
+    --surface-variant:#241C27;         /* bloques alternos */
+    --outline:#4B3845;
+
+    --text:#ECE6F0;
+    --text-muted:#BBA6B4;
+
+    /* Sombras un poco más sutiles en dark */
+    --elev-1:0 1px 2px rgba(0,0,0,.35), 0 8px 24px rgba(0,0,0,.45);
+    --elev-2:0 10px 28px rgba(0,0,0,.55);
+
+    /* Overlays/estados (derivados del primario) */
+    --hover: color-mix(in oklab, var(--primary) 18%, transparent);
+    --focus: color-mix(in oklab, var(--primary) 32%, transparent);
+  }
+
+  /* Fondo y texto global */
+  body, .m3-body{ background:var(--bg); color:var(--text); }
+  p{ color:var(--text); }
+  .text-muted{ color:var(--text-muted); }
+
+  /* App bar / nav */
+  .appbar{ background:var(--surface); border-bottom:1px solid var(--outline); }
+
+  /* Pills / filtros */
+  .pill{
+    background: color-mix(in oklab, var(--surface-variant) 88%, black);
+    border-color: var(--outline);
+    color: var(--text);
+  }
+  .pill.is-active{
+    background: var(--primary);
+    color: var(--on-primary);
+    border-color: var(--primary);
+  }
+
+  /* Botones */
+  .btn-primary, md-filled-button{
+    background: var(--primary);
+    color: var(--on-primary);
+    border-color: var(--primary);
+  }
+  .btn-tonal, md-filled-tonal-button{
+    background: var(--primary-container);
+    color: var(--on-primary-container);
+    border-color: color-mix(in oklab, var(--primary) 35%, transparent);
+  }
+  .btn-outlined, md-outlined-button{
+    color: var(--primary);
+    border-color: var(--primary);
+    background: transparent;
+  }
+
+  /* Inputs */
+  input, textarea, select, md-outlined-text-field{
+    background: color-mix(in oklab, var(--surface) 92%, black);
+    color: var(--text);
+    border-color: var(--outline);
+  }
+
+  /* Links */
+  a{ color: var(--primary); }
+}
+
+/* ===== Micro-interacciones “dinámicas” (claro y oscuro) ===== */
+.btn-primary, md-filled-button,
+.btn-tonal, md-filled-tonal-button,
+.btn-outlined, md-outlined-button,
+.pill, .pill.is-active,
+input, textarea, select, md-outlined-text-field,
+a{
+  transition: background-color .18s ease, color .18s ease,
+              border-color .18s ease, box-shadow .2s ease, filter .18s ease;
+}
+.btn-primary:hover, md-filled-button:hover{ filter: brightness(.96); box-shadow: var(--elev-2); }
+.btn-tonal:hover, md-filled-tonal-button:hover{ background: color-mix(in oklab, var(--primary-container) 88%, var(--primary)); }
+.btn-outlined:hover{ background: var(--hover); }
+.pill:hover{ background: var(--hover); }
+a:hover{ background: var(--hover); border-radius: 8px; }
+
+/* ==== Animación de cambio de tema (global) ==== */
+html.theme-animating :where(body, main, header, footer, section, aside, nav, article, div, p, h1, h2, h3, h4, h5, h6, a, button, input, select, textarea, label, ul, li, canvas, img){
+  transition:
+    color .24s ease,
+    background-color .24s ease,
+    border-color .24s ease,
+    outline-color .24s ease,
+    box-shadow .24s ease,
+    fill .24s ease,
+    stroke .24s ease,
+    filter .24s ease;
+}
+
+/* Evita mareo si el usuario prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce){
+  html.theme-animating *{ transition: none !important; }
+}
+
+/* (Opcional) View Transitions API para cross-fade de toda la vista */
+@supports (view-transition-name: root){
+  html{ view-transition-name: root; }
+}
+
+/* ===== Hover "bleach" en modo oscuro (como las gráficas) ===== */
+:root[data-theme="dark"] .how-card .tile,
+:root[data-theme="dark"] .hint-card .tile{
+  /* añadimos transición también de filtro */
+  transition: background .18s ease, box-shadow .18s ease,
+              transform .18s ease, filter .18s ease;
+}
+
+/* un ligero aclarado + un toque de saturación en hover */
+:root[data-theme="dark"] .how-card:hover .tile,
+:root[data-theme="dark"] .hint-card:hover .tile{
+  filter: brightness(1.10) saturate(1.04);
+}
+
+/* refuerzo visual del contorno/elevación en hover (opcional) */
+:root[data-theme="dark"] .how-card:hover,
+:root[data-theme="dark"] .hint-card:hover{
+  box-shadow: 0 18px 46px rgba(0,0,0,.55);
+}
+
+/* Accesibilidad: usa también focus-visible para teclado */
+:root[data-theme="dark"] .how-card:focus-visible .tile,
+:root[data-theme="dark"] .hint-card:focus-visible .tile{
+  filter: brightness(1.10) saturate(1.04);
+}
+
+/* ===== Testimonios ===== */
+.testi-grid{
+  display:grid; gap:16px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.testi-card{
+  grid-column: span 4 / span 4;
+  padding:16px; border-radius: var(--radius-lg);
+}
+.testi-head{ display:flex; gap:12px; align-items:center; margin-bottom:8px; }
+.avatar{
+  width:48px; height:48px; border-radius:12px; object-fit:cover;
+  outline:1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 70%);
+}
+.testi-name{ margin:0; font-weight:800; }
+.testi-role{ margin:0; opacity:.75; font-size:.95rem; }
+.testi-text{ margin:0; line-height:1.55; }
+
+@media (max-width:1100px){
+  .testi-card{ grid-column: span 6 / span 6; }
+}
+@media (max-width:680px){
+  .testi-card{ grid-column: span 12 / span 12; }
+}
+
+/* ===== Equipo / Tecnología ===== */
+.tech-grid{
+  display:grid; gap:16px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.tech-card{
+  grid-column: span 4 / span 4;
+  padding:16px; border-radius: var(--radius-lg);
+}
+.tech-list{ list-style:none; margin:8px 0 0; padding:0; display:flex; gap:8px; flex-wrap:wrap; }
+.badge{
+  display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px;
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 6%);
+  border:1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 72%);
+  font-weight:600; font-size:.95rem;
+}
+:root[data-theme="dark"] .badge{
+  background: color-mix(in oklab, #1b171e, var(--md-sys-color-primary,#9a82db) 9%);
+  border-color: rgba(255,255,255,.12);
+}
+
+@media (max-width:1100px){
+  .tech-card{ grid-column: span 6 / span 6; }
+}
+@media (max-width:680px){
+  .tech-card{ grid-column: span 12 / span 12; }
+}
+
+/* ===== Footer mejorado ===== */
+.socials{ display:flex; gap:12px; align-items:center; margin-top:10px; flex-wrap:wrap; }
+.socials a{
+  display:inline-flex; align-items:center; gap:6px;
+  text-decoration:none; color:inherit; padding:6px 10px; border-radius:999px;
+  border:1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 72%);
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), transparent 0%);
+}
+.socials a:hover{ background: color-mix(in oklab, var(--md-sys-color-primary,#6750A4) 10%, transparent); }
+:root[data-theme="dark"] .socials a{
+  border-color: rgba(255,255,255,.12);
+  background: color-mix(in oklab, #1b171e, var(--md-sys-color-primary,#9a82db) 6%);
+}
+:root[data-theme="dark"] .socials a:hover{
+  background: color-mix(in oklab, #1b171e, var(--md-sys-color-primary,#9a82db) 10%);
+}
+
+/* Testimonios: detalles visuales, reusa micro-card para el contenedor */
+.testi-card{ padding:16px; }
+.testi-head{ display:flex; gap:12px; align-items:center; margin-bottom:8px; }
+.avatar{
+  width:48px; height:48px; border-radius:12px; object-fit:cover;
+  outline:1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 70%);
+}
+.testi-name{ margin:0; font-weight:800; }
+.testi-role{ margin:0; opacity:.75; font-size:.95rem; }
+.testi-text{ margin:0; line-height:1.55; }
+
+/* Equipo & Tecnología: conserva badges existentes, solo spacing */
+.tech-card{ padding:16px; }
+.tech-list{
+  list-style:none; margin:8px 0 0; padding:0;
+  display:flex; gap:8px; flex-wrap:wrap;
+}
+
+/* Responsivo coherente con tu grid */
+@media (max-width:1100px){
+  #testimonios .micro-card,
+  #equipo .micro-card { grid-column: span 6 / span 6; }
+}
+@media (max-width:680px){
+  #testimonios .micro-card,
+  #equipo .micro-card { grid-column: span 12 / span 12; }
+}
+
+/* ====== Equipo & Tecnología · Grid armónico ====== */
+/* Grid con ritmo de 12 columnas, mismo gap del resto */
+#equipo .section-grid.expressive {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px;
+}
+
+/* Cards: contenedor limpio y coherente en M3 */
+#equipo md-outlined-card.tech-card {
+  /* asegura colores correctos en claro/oscuro dentro del shadow DOM */
+  --md-outlined-card-container-color: var(--md-sys-color-surface);
+  --md-outlined-card-outline-color: var(--md-sys-color-outline);
+  border-radius: 24px;             /* igual que tus micro-cards */
+  overflow: hidden;                /* recorta imagenes a los bordes */
+}
+
+/* Layout interno consistente: imagen arriba, texto abajo */
+.tech-card .tile {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: transparent !important;   /* evita manchas en dark */
+}
+
+.tech-card .tile-media {
+  aspect-ratio: 16 / 9;     /* base (se puede sobrescribir con utilidades) */
+  overflow: hidden;
+}
+.tech-card .tile-media img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.tech-card .tile-text { padding: 16px; }
+.tech-card .micro-title { margin: 0 0 4px 0; }
+.tech-card .micro-text  { margin: 0; opacity: .75; }
+
+/* Utilidades de span (tus mismas clases) */
+#equipo .span-3  { grid-column: span 3 / span 3; }
+#equipo .span-4  { grid-column: span 4 / span 4; }
+#equipo .span-6  { grid-column: span 6 / span 6; }
+#equipo .span-12 { grid-column: span 12 / span 12; }
+
+/* Utilidades de relación de aspecto (para variación controlada) */
+.tech-card.ar-1x1   .tile-media{ aspect-ratio: 1 / 1; }
+.tech-card.ar-4x3   .tile-media{ aspect-ratio: 4 / 3; }
+.tech-card.ar-16x9  .tile-media{ aspect-ratio: 16 / 9; }
+.tech-card.ar-21x9  .tile-media{ aspect-ratio: 21 / 9; }
+
+/* Hover/focus coherente y sobrio (también en dark) */
+#equipo md-outlined-card.tech-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,.12); }
+#equipo md-outlined-card.tech-card:focus-visible { outline: 3px solid var(--focus); }
+
+/* Dark mode: NO meter elementos "dentro de otros" */
+:root[data-theme="dark"] #equipo md-outlined-card.tech-card {
+  --md-outlined-card-container-color: var(--md-sys-color-surface);
+  --md-outlined-card-outline-color: var(--md-sys-color-outline);
+  background: transparent; /* deja que el host pinte con tokens */
+}
+:root[data-theme="dark"] .tech-card .tile { background: transparent !important; }
+
+/* Responsive: como el ejemplo de Material */
+@media (max-width:1100px){
+  #equipo .span-6 { grid-column: span 12 / span 12; }
+  #equipo .span-4 { grid-column: span 6  / span 6;  }
+  #equipo .span-3 { grid-column: span 6  / span 6;  }
+}
+@media (max-width:680px){
+  #equipo .span-6,
+  #equipo .span-4,
+  #equipo .span-3 { grid-column: span 12 / span 12; }
+}
+
+  /* ===== FAQ (acordeón) ===== */
+.faq-card { padding: 0; } /* micro-card ya define bordes/radios */
+.faq-item { display: block; }
+
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 16px 16px 14px 16px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item .q {
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+.faq-item .faq-icon {
+  transition: transform .18s ease;
+  font-size: 24px;
+}
+.faq-item[open] .faq-icon { transform: rotate(180deg); }
+
+.faq-item .a {
+  padding: 0 16px 16px 16px;
+  color: var(--text, var(--md-sys-color-on-surface));
+  opacity: .9;
+}
+
+/* separación visual entre items si decides poner varios <details> dentro de la misma card */
+.faq-item + .faq-item { border-top: 1px solid var(--md-sys-color-outline); }
+
+/* foco accesible */
+.faq-item summary:focus-visible {
+  outline: 3px solid var(--focus, color-mix(in oklab, var(--md-sys-color-primary) 32%, transparent));
+  border-radius: 12px;
+}
+
+/* dark/light ya heredan tokens de tus variables */
+/* ===== FAQ Big Cards ===== */
+.faq-card-big {
+  padding: 0;
+  border-radius: 28px;
+  min-height: 280px; /* altura mínima cómoda */
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item { width: 100%; }
+
+.faq-item summary {
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 24px 20px;
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-q {
+  font-size: 1.25rem; /* más grande para legibilidad */
+  font-weight: 800;
+  margin: 0;
+}
+.faq-icon {
+  transition: transform .2s ease;
+  font-size: 28px;
+}
+.faq-item[open] .faq-icon { transform: rotate(180deg); }
+
+.faq-a {
+  padding: 0 20px 20px 20px;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--text, var(--md-sys-color-on-surface));
+  opacity: .95;
+}
+
+/* Responsive: cada card en ancho completo en móviles */
+@media (max-width: 768px){
+  .faq-card-big.span-6 { grid-column: span 12 / span 12; }
+}
+
+/* ===== FAQ Placeholders ===== */
+#faq .placeholder {
+  display: flex; align-items: center; justify-content: center;
+  background: color-mix(in oklab, var(--md-sys-color-surface) 88%, var(--md-sys-color-primary) 12%);
+  color: var(--md-sys-color-on-surface);
+}
+:root[data-theme="dark"] #faq .placeholder {
+  background: color-mix(in oklab, #1c1b1f 85%, var(--md-sys-color-primary) 15%);
+  color: var(--md-sys-color-on-surface);
+}
+
+/* ===== FAQ Big ===== */
+#faq .how-card {
+  min-height: 360px;   /* más altas que las normales */
+}
+
+#faq .tile-media {
+  padding: 32px;       /* más aire para el placeholder */
+}
+#faq .tile-media svg {
+  width: 80px;         /* icono más grande */
+  height: 80px;
+}
+
+/* ===== Fondo combinado: Aurora + Grid ===== */
+body.m3-body.bg-aurora-grid {
+  --a1: radial-gradient(60% 40% at 20% 10%, #ffd6ea 0%, transparent 60%);
+  --a2: radial-gradient(55% 35% at 80% 15%, #e3deff 0%, transparent 60%);
+  --a3: radial-gradient(50% 30% at 40% 90%, #d8f3ff 0%, transparent 60%);
+  --grid-light:
+    linear-gradient(to right, rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,.04) 1px, transparent 1px),
+    radial-gradient(circle, rgba(0,0,0,.08) 1px, transparent 1px) 0 0 / 24px 24px;
+
+  background: var(--a1), var(--a2), var(--a3), var(--grid-light), linear-gradient(180deg,#ffffff,#fbfbfe 60%,#ffffff);
+  background-attachment: fixed;
+  animation: auroraMove 32s linear infinite alternate;
+}
+
+:root[data-theme="dark"] body.m3-body.bg-aurora-grid {
+  --a1: radial-gradient(70% 45% at 15% 8%, rgba(157, 89, 255,.15) 0%, transparent 65%);
+  --a2: radial-gradient(65% 40% at 90% 18%, rgba(0, 214, 170,.15) 0%, transparent 65%);
+  --a3: radial-gradient(55% 35% at 50% 92%, rgba(77, 200, 255,.10) 0%, transparent 65%);
+  --grid-dark:
+    linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,.12) 1px, transparent 1px) 0 0 / 24px 24px;
+
+background-size: auto, auto, 40px 40px;
+
+  background: var(--a1), var(--a2), var(--a3), var(--grid-dark), linear-gradient(180deg,#0e0e14,#121018 60%,#0e0e14);
+  background-attachment: fixed;
+  animation: auroraMove 28s linear infinite alternate;
+}
+
+@keyframes auroraMove {
+  0%   { background-position: 0% 0%, 100% 0%, 40% 100%, 0 0, center; }
+  100% { background-position: 10% 5%, 90% 10%, 50% 95%, 0 0, center; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  body.m3-body.bg-aurora-grid { animation: none; }
+  :root[data-theme="dark"] body.m3-body.bg-aurora-grid { animation: none; }
+}
+
+
+/* Aumentar tamaño del logo en el footer */
+.footer .brand-logo {
+  width: 128px;   /* antes 32px */
+  height: 128px;
+}
+/* Solo afecta al logo del footer */
+:root[data-theme="dark"] .footer .brand-logo {
+  filter: invert(1) brightness(1.2);
+}
+
+/* Logo de la barra lateral en modo oscuro */
+:root[data-theme="dark"] .side-nav .nav-logo img {
+  filter: invert(1) brightness(1.2);
+}
+.how-icon{
+  font-size: 72px;
+  line-height: 1;
+  color: #000;   /* negro */
+  display: block;
+  margin: auto;
+}
+
+/* ===== Cómo funciona: centrado perfecto del icono ===== */
+.how-card.hsplit .tile {
+  display: grid;
+  grid-template-rows: auto 1fr; /* media arriba, texto abajo */
+}
+
+.how-card.hsplit .tile-media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  padding: 16px;
+}
+
+/* Tamaño base del SVG (via <img>) */
+.how-card.hsplit .tile-media img {
+  display: block;
+  width: clamp(56px, 8vw, 96px);
+  height: clamp(56px, 8vw, 96px);
+  object-fit: contain;
+  filter: brightness(0); /* negro por defecto */
+}
+
+/* Oscuro automático si usas prefers-color-scheme */
+@media (prefers-color-scheme: dark) {
+  .how-card.hsplit .tile-media img {
+    filter: invert(1) brightness(1.2);
+  }
+}
+
+/* Si tu sitio usa data-theme="dark" (como en la barra lateral) */
+:root[data-theme="dark"] .how-card.hsplit .tile-media img {
+  filter: invert(1) brightness(1.2);
+}
+
+/* ===== SVG de las how-card ===== */
+
+/* En modo claro: se ven oscuros (negro) */
+.how-card.hsplit .tile-media img {
+  filter: brightness(0);  /* los fuerza a negro */
+  transition: filter .3s ease;
+}
+
+/* En modo oscuro: se invierten (blancos) */
+:root[data-theme="dark"] .how-card.hsplit .tile-media img {
+  filter: invert(1) brightness(1.2);
+}

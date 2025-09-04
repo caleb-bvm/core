@@ -1,0 +1,9 @@
+chardet
+flask
+waitress
+langchain_openai
+flask-cors
+langchain
+transformers
+accelerate
+bitsandbytes
