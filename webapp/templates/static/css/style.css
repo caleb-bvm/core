@@ -1303,3 +1303,10 @@ background-size: auto, auto, 40px 40px;
 :root[data-theme="dark"] .how-card.hsplit .tile-media img {
   filter: invert(1) brightness(1.2);
 }
+
+/* static/css/style.css (o donde manejes estilos) */
+.explain-card { padding:16px; border:1px solid rgba(0,0,0,.08); border-radius:16px; background:var(--surface,#fff);}
+.explain-item { display:grid; grid-template-columns: 1fr 1fr; gap:12px; padding:12px; border-radius:14px; }
+.explain-item img { width:100%; height:auto; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,.06); }
+.explain-item .micro-title{ margin:4px 0 8px; font-weight:600;}
+.explain-item ul{ margin:0; padding-left:1em; }

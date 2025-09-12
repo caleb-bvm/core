@@ -51,6 +51,63 @@
       display:inline-flex; align-items:center; justify-content:center; vertical-align:middle;
     }
   </style>
+
+  <style>
+  /* === Chat clínico (panel + chips) === */
+  #chat-fab{
+    position: fixed; right: 20px; bottom: 20px; z-index: 9999;
+    border-radius: 9999px; padding: 10px 14px;
+    background: var(--md-sys-color-primary, #4f46e5); color: #fff; border: 0;
+    box-shadow: 0 8px 20px rgba(0,0,0,.18); cursor: pointer; font-weight: 600;
+  }
+  #chat-panel{
+    position: fixed; top: 0; right: 0; height: 100vh; width: 380px; max-width: 90vw;
+    background: var(--surface, #fff); border-left: 1px solid rgba(0,0,0,.08);
+    display: none; flex-direction: column; z-index: 9998;
+    box-shadow: -8px 0 24px rgba(0,0,0,.08);
+    font-family: inherit;
+  }
+  #chat-panel.open{ display:flex; }
+  #chat-panel header{ padding: 12px 14px; border-bottom: 1px solid rgba(0,0,0,.08); }
+  #chat-panel header h3{ margin: .2rem 0 .2rem; font-size: 1rem; }
+  #chat-panel header small{ opacity:.7; }
+  #chat-log{ padding:12px 14px; overflow:auto; flex:1; display:flex; flex-direction:column; gap:8px; }
+  #chat-quick{ display:flex; flex-wrap:wrap; gap:8px; padding:8px 14px; }
+  #chat-quick button{ padding:.5rem .75rem; border-radius:999px; border:1px solid rgba(0,0,0,.15); background:#fff; cursor:pointer; }
+  #chat-form{ display:flex; gap:8px; padding:10px 14px; border-top:1px solid rgba(0,0,0,.08); }
+  #chat-input{ flex:1; padding:.65rem .8rem; border-radius:10px; border:1px solid rgba(0,0,0,.15); font:inherit; }
+  .msg{ border:1px solid rgba(0,0,0,.15); border-radius:12px; padding:8px; background:#fff; }
+  .msg.user{ align-self:flex-end; background:#eef2ff; border-color:#c7d2fe; }
+  .msg.assistant{ align-self:flex-start; }
+  .xai-card{ border:1px solid rgba(0,0,0,.15); border-radius:12px; padding:10px; background:#fff; }
+  .xai-card .row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:.5rem; }
+  .disclaimer{ font-size:.8rem; opacity:.7; margin:8px 14px 14px; }
+
+  /* Chips de hallazgos (barra) */
+  #findings-bar{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+  .finding-chip{
+    border:1px solid rgba(0,0,0,.15); border-radius:999px; padding:.35rem .7rem;
+    background:#fff; cursor:pointer;
+  }
+  .finding-chip.selected{ outline:2px solid #4f46e5; background:#eef2ff; }
+</style>
+
+<style>
+  /* Panel y botón del reporte */
+  #report-panel{
+    position: fixed; left: 20px; bottom: 84px; z-index: 9998;
+    background: #fff; color: inherit;
+    border: 1px solid rgba(0,0,0,.12);
+    border-radius: 12px; padding: 10px; max-width: 380px; box-shadow: 0 8px 20px rgba(0,0,0,.12);
+  }
+  #btn-open-report{
+    position: fixed; left: 20px; bottom: 20px; z-index: 9999;
+    border-radius: 9999px; padding: 10px 14px; border: 1px solid rgba(0,0,0,.15);
+    background: #fff; cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0,0,0,.12);
+  }
+</style>
+
 </head>
 <body class="m3-body use-rail bg-aurora-grid">
     
@@ -601,6 +658,26 @@
     </section>
   </main>
 
+  <!-- Botón: OJO con type="button" para que NO envíe el form -->
+<md-filled-tonal-button id="btn-xai" type="button" style="margin-top:12px">
+  <md-icon class="material-symbols-rounded">visibility</md-icon>
+  <span>Ver explicación</span>
+</md-filled-tonal-button>
+
+<!-- (Opcional) Slider de opacidad 0–100 -->
+<div style="margin:8px 0">
+  <label for="xai-opacity" class="caption">Opacidad del mapa</label>
+  <input id="xai-opacity" type="range" min="0" max="100" value="100" />
+</div>
+
+<!-- Panel donde se renderizan las tarjetas -->
+<div id="xai-panel" hidden class="explain-card" style="margin-top:8px">
+  <h3 class="micro-title">Explicación de la IA</h3>
+  <div id="xai-items" class="grid gap-4"></div>
+  <p class="caption">Apoyo visual; no sustituye el criterio clínico.</p>
+</div>
+
+
 <!-- FAQ -->
 <section id="faq" class="section container">
   <md-filled-tonal-card class="section-head-card" data-reveal>
@@ -679,6 +756,41 @@
     </md-elevated-card>
   </div>
 </section>
+
+<!-- === Chat clínico: FAB + panel lateral === -->
+<button id="chat-fab" type="button" aria-label="Abrir chat clínico">Chat clínico</button>
+
+<aside id="chat-panel" aria-label="Asistente clínico">
+  <header>
+    <h3>Asistente clínico</h3>
+    <small id="case-meta">Caso: —</small>
+  </header>
+
+  <div id="chat-log" aria-live="polite"></div>
+
+  <div id="chat-quick"></div>
+
+  <form id="chat-form" autocomplete="off">
+    <input id="chat-input" placeholder="Pregunta clínica…" required />
+    <button type="submit">Enviar</button>
+  </form>
+
+  <div class="disclaimer">Apoyo clínico asistido por IA. No reemplaza el juicio médico.</div>
+</aside>
+
+<div id="findings-bar" aria-label="Hallazgos seleccionables para chat"></div>
+
+<aside id="report-panel" style="position:fixed;left:20px;bottom:20px;z-index:9998;background:#fff;border:1px solid #ddd;border-radius:12px;padding:10px;max-width:360px;display:none">
+  <b>Reporte</b>
+  <div id="report-list" style="max-height:240px;overflow:auto;margin:8px 0"></div>
+  <div style="display:flex;gap:8px">
+    <button id="btn-export-report">Descargar .txt</button>
+    <button id="btn-toggle-report">Cerrar</button>
+  </div>
+</aside>
+<button id="btn-open-report" style="position:fixed;left:20px;bottom:20px;z-index:9999">Ver reporte</button>
+
+</body>
 
 
 <footer class="footer">
@@ -807,12 +919,5 @@
     });
 
     // Tema
-    const themeSwitch = document.getElementById('theme-switch');
-    const root = document.documentElement;
-    const setTheme = (dark) => root.setAttribute('data-theme', dark ? 'dark' : 'light');
-    themeSwitch?.addEventListener('change', (ev) => setTheme(ev.target.selected));
-    setTheme(themeSwitch?.selected ?? false);
-  </script>
-</body>
-</html>
+
 

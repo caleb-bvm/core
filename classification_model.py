@@ -7,15 +7,15 @@ import pytorch_lightning as pl
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from build.lib.torchcam.methods import GradCAM
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 from torch.utils.data import DataLoader, Dataset
-from torchcam.utils import overlay_mask
 from torchvision import transforms, models
-from torchvision.transforms.functional import to_pil_image
+from pytorch_grad_cam import GradCAM
+from pytorch_grad_cam.utils.image import show_cam_on_image
+import numpy as np 
 from waitress import serve
 import os
 
@@ -33,6 +33,16 @@ default_transform = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
+
+
+# ---------- PARCHE 1: desactivar activaciones in-place (evita conflictos autograd) ----------
+def _disable_inplace_activations(model: nn.Module):
+    for m in model.modules():
+        # ReLU / ReLU6 / SiLU por si se usan en otros backbones
+        if isinstance(m, (nn.ReLU, nn.ReLU6, nn.SiLU)):
+            if hasattr(m, "inplace") and m.inplace:
+                m.inplace = False
+# -------------------------------------------------------------------------------------------
 
 
 class JSONImageDataset(Dataset):
@@ -59,6 +69,7 @@ class ImageClassifier(pl.LightningModule):
         super().__init__()
         self.model = models.resnet18(pretrained=True)
         self.model.fc = nn.Linear(self.model.fc.in_features, num_classes)
+        _disable_inplace_activations(self.model)  # <-- PARCHE aplicado aquí
         self.criterion = nn.CrossEntropyLoss()
 
     def forward(self, x):
@@ -92,27 +103,26 @@ def evaluate_model(model, dataloader):
 def predict_image(model, img_path):
     model.eval()
     image = Image.open(img_path).convert('RGB')
-    transformed_image = default_transform(image).unsqueeze(0)
+    transformed_image = default_transform(image).unsqueeze(0)  # (1,3,224,224)
 
-    cam_extractor = cam(model.model)
+    # ---- pytorch-grad-cam setup ----
+    target_layers = [model.model.layer4[-1]]  # capa profunda de ResNet18
+    with GradCAM(model=model.model, target_layers=target_layers, use_cuda=False) as cam:
+        # forward
+        with torch.no_grad():
+            logits = model(transformed_image)
+        pred_cls = int(torch.argmax(logits, dim=1).item())
 
-    transformed_image = transformed_image.requires_grad_(True)
-    output = model(transformed_image)
-    _, predicted_class = torch.max(output, 1)
-    print(f"Predicted Class: {predicted_class.item()}")
+        # CAM: devuelve (N,H,W) en [0..1]
+        grayscale_cam = cam(input_tensor=transformed_image, targets=None)[0]
 
-    activation_map = cam_extractor(predicted_class.item(), output)[0]
-    cam_extractor.remove_hooks()
+    # overlay
+    overlay = _overlay_cam_on_pil(image, grayscale_cam)
 
-    result = overlay_mask(to_pil_image(transformed_image[0]),
-                          to_pil_image(activation_map, mode='F'),
-                          alpha=0.5)
-
-    result = resize_overlay(result, image.size)
-
-    plt.imshow(result)
+    plt.imshow(overlay)
     plt.axis('off')
     plt.show()
+
 
 
 def create_api(model):
@@ -132,14 +142,19 @@ def create_api(model):
             cam_extractor = cam(model.model)
 
             transformed_image = transformed_image.requires_grad_(True)
-            output = model(transformed_image)
+
+            with torch.enable_grad():
+                output = model(transformed_image).detach()  # evitamos retener grafo innecesario
+                # Re-conectar grad sobre una copia para CAM
+                output = output.requires_grad_(True)
+
             _, predicted_class = torch.max(output, 1)
 
-            # Generate the activation map
-            activation_map = cam_extractor(predicted_class.item(), output)[0]
+            # ---------- PARCHE 2: clonar scores antes de torchcam ----------
+            activation_map = cam_extractor(predicted_class.item(), output.clone())[0]
+            # ----------------------------------------------------------------
             cam_extractor.remove_hooks()
 
-            # Convert activation map to image
             overlay_result = overlay_mask(
                 to_pil_image(transformed_image[0]),
                 to_pil_image(activation_map, mode='F'),
@@ -147,10 +162,10 @@ def create_api(model):
             )
             overlay_result = resize_overlay(overlay_result, image.size)
 
-            overlay_image_path = "activation_map.png"
-            overlay_result.save(overlay_image_path)
+            buf = Path(script_dir) / "activation_map.png"
+            overlay_result.save(buf)
 
-            with open(overlay_image_path, "rb") as img_file:
+            with open(buf, "rb") as img_file:
                 encoded_image = base64.b64encode(img_file.read()).decode('utf-8')
 
             return jsonify({
@@ -190,9 +205,9 @@ def main():
 
         num_classes = len(set(item['class_id'] for item in dataset.data))
 
-        # Check if a checkpoint is provided for resuming training
         if args.weights:
             model = ImageClassifier.load_from_checkpoint(args.weights, num_classes=num_classes)
+            _disable_inplace_activations(model.model)  # seguridad extra si viene del ckpt
             print(f"Resuming training from checkpoint: {args.weights}")
         else:
             model = ImageClassifier(num_classes)
@@ -218,18 +233,19 @@ def main():
 
         checkpoint_path = args.weights or Path(args.save_dir) / "last.ckpt"
         model = ImageClassifier.load_from_checkpoint(checkpoint_path)
-
+        _disable_inplace_activations(model.model)  # seguridad extra
         evaluate_model(model, dataloader)
 
     elif args.command == "predict":
         checkpoint_path = args.weights or Path(args.save_dir) / "last.ckpt"
         model = ImageClassifier.load_from_checkpoint(checkpoint_path).to('cpu')
-
+        _disable_inplace_activations(model.model)  # seguridad extra
         predict_image(model, args.input_image)
 
     elif args.command == "api":
         checkpoint_path = args.weights or Path(args.save_dir) / "last.ckpt"
         model = ImageClassifier.load_from_checkpoint(checkpoint_path).to('cpu')
+        _disable_inplace_activations(model.model)  # seguridad extra
         app = create_api(model)
         serve(app, host='0.0.0.0', port=API_PORT)
 

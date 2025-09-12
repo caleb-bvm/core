@@ -11,9 +11,67 @@ from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from pathlib import Path
 from flask_cors import CORS
+from flask import Flask, request, jsonify, Response
+from collections import OrderedDict
+import hashlib, time, re
+
+# --- CACHE simple en memoria (5 min, máx 256 entradas) ---
+CACHE_TTL_SEC = 300
+CACHE_MAX = 256
+_CACHE = OrderedDict()
+
+def _cache_key(model_name, prompt, preds_sig):
+    base = f"{model_name}|{prompt}|{preds_sig}"
+    return hashlib.sha256(base.encode()).hexdigest()
+
+def _cache_get(k):
+    now = time.time()
+    v = _CACHE.get(k)
+    if not v: return None
+    if now - v["ts"] > CACHE_TTL_SEC:
+        _CACHE.pop(k, None); return None
+    # LRU touch
+    _CACHE.move_to_end(k)
+    return v["data"]
+
+def _cache_put(k, data):
+    _CACHE[k] = {"ts": time.time(), "data": data}
+    _CACHE.move_to_end(k)
+    while len(_CACHE) > CACHE_MAX:
+        _CACHE.popitem(last=False)
+
+# --- Firmar subset de predicciones para cache y conversación ---
+def preds_signature(preds):
+    if not preds: return "none"
+    mini = []
+    for d in preds:
+        mini.append({
+            "id": d.get("id") or "",
+            "c": d.get("class"),
+            "s": round(float(d.get("score", 0)), 2),
+        })
+    return hashlib.md5(json.dumps(mini, sort_keys=True).encode()).hexdigest()
+
+# --- Extraer JSON de bloque ```...``` si viene en el texto ---
+def extract_struct(text):
+    if not isinstance(text, str): return None
+    m = re.search(r"```(?:json)?\s*([\s\S]*?)```", text, re.I)
+    if not m: return None
+    try:
+        return json.loads(m.group(1))
+    except Exception:
+        return None
+
+# --- Sugerencias próximas (baratas) ---
+DEFAULT_SUGGESTIONS = [
+    "Justifica la categoría BI-RADS",
+    "¿Qué estudios complementarios recomendarías?",
+    "Resume en 5 viñetas para el reporte"
+]
+
 
 # Configuration
-language = "Persian"
+language = "Spanish"
 host = "0.0.0.0"
 port = 33518
 config_json = "config.json"
@@ -135,38 +193,82 @@ def generate_response():
         predictions = data.get('predictions')
         demo = data.get('demo')
 
+        stream = request.args.get("stream") == "1"
+
         if not prompt:
             return jsonify({"error": "Prompt is required."}), 400
 
+        # Prepare context
         if not context:
             context = text_context_prepend
         else:
             context = text_context_prepend + context
 
         if predictions:
-            predictions = str(predictions)
-            context += text_predictions.format(predictions)
+            predictions_str = str(predictions)
+            context += text_predictions.format(predictions_str)
 
         if demo:
             demo_text = demo_get_text(demo)
             if demo_text:
                 context += text_description.format(demo_text)
 
+        # Conversation context
         if conversation_id:
-            context = get_conversation(conversation_id)
-            if not context:
+            loaded_context = get_conversation(conversation_id)
+            if not loaded_context:
                 return jsonify({"error": "Invalid conversation ID."}), 400
+            context_list = loaded_context
         else:
             conversation_id = str(uuid4())
-            context = [{"role": "system", "content": context}]
+            context_list = [{"role": "system", "content": context}]
 
-        response_content = langchain_api.generate_response(prompt, context)
-        context.append({"role": "user", "content": prompt})
-        context.append({"role": "assistant", "content": response_content})
+        # --- CACHE signature ---
+        sig = preds_signature(predictions or [])
+        model_name = "openai"
+        ckey = _cache_key(model_name, prompt, sig)
+        hit = _cache_get(ckey)
+        if hit and not stream:
+            return jsonify({**hit, "conversation_id": conversation_id, "cached": True}), 200
 
-        save_conversation(conversation_id, context)
+        # Call LLM
+        answer_text = langchain_api.generate_response(prompt, context_list)
+        context_list.append({"role": "user", "content": prompt})
+        context_list.append({"role": "assistant", "content": answer_text})
 
-        return jsonify({"response": response_content, "conversation_id": conversation_id})
+        save_conversation(conversation_id, context_list)
+
+        # Try to extract structured block
+        struct = extract_struct(answer_text) or None
+
+        # Suggestions
+        suggested_prompts = list(DEFAULT_SUGGESTIONS)
+        if predictions:
+            ids = [d.get("id") for d in predictions if d.get("score", 0) >= 0.8]
+            if len(ids) >= 2:
+                suggested_prompts.insert(0, f"Compara {ids[0]} con {ids[1]}")
+
+        # Evidence IDs
+        evidence_ids = [d.get("id") for d in (predictions or []) if d.get("id")]
+
+        payload = {
+            "text": answer_text,
+            "struct": struct,
+            "suggested_prompts": suggested_prompts[:4],
+            "evidence_ids": evidence_ids,
+        }
+
+        if not stream:
+            _cache_put(ckey, payload)
+            return jsonify({**payload, "conversation_id": conversation_id}), 200
+
+        def gen():
+            for part in answer_text.split(" "):
+                yield part + " "
+                time.sleep(0.01)
+
+        return Response(gen(), mimetype="text/plain")
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
