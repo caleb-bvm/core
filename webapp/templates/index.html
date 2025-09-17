@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CORE</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+<script type="module" src="{{ url_for('static', filename='js/report_pdf.js') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}"></script>
+
 
   <!-- Material Web (M3) -->
   <script type="module" src="https://unpkg.com/@material/web@latest/all.js?module"></script>
@@ -21,6 +25,22 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}">
   <link rel="stylesheet" href="{{ url_for('static',  filename='css/style_rail_fix.css') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}">
 
+  <!-- BEGIN MD3 circular-progress -->
+<script type="module">
+  import 'https://esm.sh/@material/web/progress/circular-progress/circular-progress.js';
+</script>
+<!-- END MD3 circular-progress -->
+
+
+  <!-- BEGIN MATERIAL SYMBOLS (MD3 icons) -->
+<link rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0,0" />
+<style>
+  .material-symbols-rounded{
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+</style>
+<!-- END MATERIAL SYMBOLS -->
   <!-- Ajustes puntuales: tipografías M3 y centrado de iconos en botones -->
   <style>
     :root{
@@ -74,7 +94,7 @@
   #chat-log{ padding:12px 14px; overflow:auto; flex:1; display:flex; flex-direction:column; gap:8px; }
   #chat-quick{ display:flex; flex-wrap:wrap; gap:8px; padding:8px 14px; }
   #chat-quick button{ padding:.5rem .75rem; border-radius:999px; border:1px solid rgba(0,0,0,.15); background:#fff; cursor:pointer; }
-  #chat-form{ display:flex; gap:8px; padding:10px 14px; border-top:1px solid rgba(0,0,0,.08); }
+  #chat-form{ display:flex; gap:8px; padding:10px 14px; }
   #chat-input{ flex:1; padding:.65rem .8rem; border-radius:10px; border:1px solid rgba(0,0,0,.15); font:inherit; }
   .msg{ border:1px solid rgba(0,0,0,.15); border-radius:12px; padding:8px; background:#fff; }
   .msg.user{ align-self:flex-end; background:#eef2ff; border-color:#c7d2fe; }
@@ -110,7 +130,7 @@
 
 </head>
 <body class="m3-body use-rail bg-aurora-grid">
-    
+  <img src="/static/assets/core.png" class="brand-logo" alt="CORE logo" style="display: none;">
   <aside class="side-nav" role="navigation">
   <div class="nav-logo">
     <img src="static/assets/logo.svg" alt="" />
@@ -345,7 +365,7 @@
       </div>
       <p class="testi-text">"Si los algoritmos de IA funcionan como prometen, y estoy seguro de 
         que la tecnología mejorará con el tiempo, esto marcará una diferencia 
-        fundamental en el tratamiento del cáncer de mama"</p>
+        fundamental en el tratamiento del cáncer de mama"</p>
     </md-outlined-card>
 
     <md-outlined-card class="micro-card span-4 testi-card" data-reveal>
@@ -374,7 +394,7 @@
         </div>
       </div>
       <p class="testi-text">“La meta no es solo mejorar la relación interpersonal, sino abordar el agotamiento
-         causado por las tareas administrativas que afectan a los médicos”</p>
+         causado por las tareas administrativas que afectan a los médicos”</p>
     </md-outlined-card>
   </div>
 </section>
@@ -630,8 +650,21 @@
               <md-icon slot="icon" class="material-symbols-rounded">refresh</md-icon>
               Reset
             </md-outlined-button>
+
+           <md-outlined-button id="btn-print" class="md3-xl-pill" type="button" disabled>
+  <md-icon slot="icon" class="material-symbols-rounded">print</md-icon>
+  Exportar PDF
+</md-outlined-button>
+
+<label class="include-chat" style="display:inline-flex;align-items:center;gap:.5rem;margin-left:.5rem">
+  <input id="include-chat" type="checkbox">
+  <span>Incluir notas del chatbot</span>
+</label>
+
+
           </div>
 
+ 
           <div class="status" id="upload-status" aria-live="polite"></div>
         </form>
 
@@ -658,24 +691,12 @@
     </section>
   </main>
 
-  <!-- Botón: OJO con type="button" para que NO envíe el form -->
-<md-filled-tonal-button id="btn-xai" type="button" style="margin-top:12px">
-  <md-icon class="material-symbols-rounded">visibility</md-icon>
-  <span>Ver explicación</span>
-</md-filled-tonal-button>
-
-<!-- (Opcional) Slider de opacidad 0–100 -->
-<div style="margin:8px 0">
-  <label for="xai-opacity" class="caption">Opacidad del mapa</label>
-  <input id="xai-opacity" type="range" min="0" max="100" value="100" />
-</div>
-
-<!-- Panel donde se renderizan las tarjetas -->
-<div id="xai-panel" hidden class="explain-card" style="margin-top:8px">
-  <h3 class="micro-title">Explicación de la IA</h3>
-  <div id="xai-items" class="grid gap-4"></div>
-  <p class="caption">Apoyo visual; no sustituye el criterio clínico.</p>
-</div>
+  <!-- Panel donde se renderizan las tarjetas (se mantiene, por si luego lo usas desde JS) -->
+  <div id="xai-panel" hidden class="explain-card" style="margin-top:8px">
+    <h3 class="micro-title">Explicación de la IA</h3>
+    <div id="xai-items" class="grid gap-4"></div>
+    <p class="caption">Apoyo visual; no sustituye el criterio clínico.</p>
+  </div>
 
 
 <!-- FAQ -->
@@ -757,37 +778,103 @@
   </div>
 </section>
 
-<!-- === Chat clínico: FAB + panel lateral === -->
-<button id="chat-fab" type="button" aria-label="Abrir chat clínico">Chat clínico</button>
+<!-- BEGIN CHATBOT · TAB + DRAWER (MD3 · RIGHT · LEGACY-INTEGRATED) -->
+<!-- Pestaña vertical estilo etiqueta (button accesible) -->
+<button
+  id="chatbot-tab"
+  class="chatbot-tab"
+  type="button"
+  aria-expanded="false"
+  aria-controls="chatbot-panel"
+  aria-label="Abrir chatbot"
+>
+  <!-- CERRADO (→ centro) = chevron_left 180deg | ABIERTO (→ borde) = chevron_left 0deg -->
+  <md-icon class="chevron material-symbols-rounded" aria-hidden="true">chevron_left</md-icon>
+  <span class="visually-hidden">Chatbot</span>
+</button>
 
-<aside id="chat-panel" aria-label="Asistente clínico">
-  <header>
-    <h3>Asistente clínico</h3>
+<!-- Drawer lateral derecho -->
+<section
+  id="chatbot-panel"
+  class="chatbot-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-hidden="true"
+  tabindex="-1"
+>
+  <header class="chatbot-head">
+    <h3 id="chatbot-title" class="chatbot-title">Asistente clínico</h3>
     <small id="case-meta">Caso: —</small>
   </header>
 
-  <div id="chat-log" aria-live="polite"></div>
+  <!-- ====== Chat viewport (scroll vertical) ====== -->
+  <div class="chat-viewport">
+    <div class="chat-wrap">
 
-  <div id="chat-quick"></div>
+      <!-- Historial (tu ID legacy) -->
+      <div id="chat-log" class="chat-log" aria-live="polite"></div>
 
-  <form id="chat-form" autocomplete="off">
-    <input id="chat-input" placeholder="Pregunta clínica…" required />
-    <button type="submit">Enviar</button>
-  </form>
-
-  <div class="disclaimer">Apoyo clínico asistido por IA. No reemplaza el juicio médico.</div>
-</aside>
-
-<div id="findings-bar" aria-label="Hallazgos seleccionables para chat"></div>
-
-<aside id="report-panel" style="position:fixed;left:20px;bottom:20px;z-index:9998;background:#fff;border:1px solid #ddd;border-radius:12px;padding:10px;max-width:360px;display:none">
-  <b>Reporte</b>
-  <div id="report-list" style="max-height:240px;overflow:auto;margin:8px 0"></div>
-  <div style="display:flex;gap:8px">
-    <button id="btn-export-report">Descargar .txt</button>
-    <button id="btn-toggle-report">Cerrar</button>
+      <!-- Indicador “escribiendo/stream” (se muestra/oculta vía JS) -->
+<!-- BEGIN CHAT · PROCESSING INDICATOR (pill + spinner bonito) -->
+<div id="chat-typing" class="chat-typing" hidden>
+  <div class="typing-pill" role="status" aria-live="polite">
+    <!-- Spinner MD3 (si está disponible) -->
+    <md-circular-progress indeterminate aria-hidden="true"></md-circular-progress>
+    <!-- Fallback ring CSS por si no se carga el componente -->
+    <span class="ring" aria-hidden="true"></span>
+    <span class="lbl">Procesando…</span>
   </div>
-</aside>
+</div>
+<!-- END CHAT · PROCESSING INDICATOR -->
+
+
+      <!-- Acciones dinámicas bajo cada respuesta (si las generas) -->
+      <div id="chat-quick" class="chat-actions"></div>
+
+      <!-- Barra de hallazgos seleccionables para el chat (mantengo tu ID) -->
+      <div id="findings-bar" aria-label="Hallazgos seleccionables para chat"></div>
+
+      <!-- (Opcional) Reporte dentro del drawer con tus mismos IDs -->
+      <aside id="report-panel" style="display:none">
+        <md-outlined-card class="md3-card" style="margin:8px 0;padding:10px">
+          <b>Reporte</b>
+          <div id="report-list" style="max-height:240px;overflow:auto;margin:8px 0"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <md-outlined-button id="btn-export-report">Descargar .txt</md-outlined-button>
+            <md-filled-tonal-button id="btn-toggle-report">Cerrar</md-filled-tonal-button>
+          </div>
+        </md-outlined-card>
+      </aside>
+
+    </div>
+  </div>
+
+<!-- ====== Footer fijo: caja + submit (limpio) ====== -->
+<footer class="chat-footer">
+  <form id="chat-form" class="chat-form" autocomplete="off">
+    <div class="input-wrap">
+      <!-- seguimos usando el MISMO id: chat-input -->
+      <textarea id="chat-input" class="chat-input" placeholder="Pregunta clínica…" rows="1" required></textarea>
+    </div>
+
+    <!-- Botón redondo estilo MD3 -->
+    <md-icon-button id="chat-send-btn" type="submit" aria-label="Enviar">
+      <md-icon class="material-symbols-rounded">send</md-icon>
+    </md-icon-button>
+  </form>
+</footer>
+
+<!-- Disclaimer debajo, fuera del footer -->
+<div class="chat-disclaimer">
+  Apoyo clínico asistido por IA. No reemplaza el juicio médico.
+</div>
+
+</section>
+
+<!-- Backdrop para mobile (se muestra sólo en ≤768px) -->
+<div id="chatbot-backdrop" class="chatbot-backdrop" hidden></div>
+<!-- END CHATBOT · TAB + DRAWER (MD3 · RIGHT · LEGACY-INTEGRATED) -->
+
 <button id="btn-open-report" style="position:fixed;left:20px;bottom:20px;z-index:9999">Ver reporte</button>
 
 </body>
@@ -919,5 +1006,5 @@
     });
 
     // Tema
-
-
+  </script>
+</html>

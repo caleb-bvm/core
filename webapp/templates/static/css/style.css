@@ -189,7 +189,6 @@ md-elevated-card:hover, md-filled-tonal-card:hover { transform:translateY(-2px);
 [data-reveal].seen{ animation: revealUp .42s cubic-bezier(.2,.8,.2,1) forwards; }
 
 /* Footer */
-.footer{ padding:22px 0; border-top:1px solid rgba(0,0,0,.06); margin-top:24px; }
 .footer-grid{ display:grid; grid-template-columns:1.2fr .8fr .8fr; gap:12px; align-items:start; }
 .footer a{ color:inherit; opacity:.9; text-decoration:none; }
 .footer a:hover{ text-decoration:underline; }
@@ -1310,3 +1309,844 @@ background-size: auto, auto, 40px 40px;
 .explain-item img { width:100%; height:auto; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,.06); }
 .explain-item .micro-title{ margin:4px 0 8px; font-weight:600;}
 .explain-item ul{ margin:0; padding-left:1em; }
+
+/* BEGIN CHATBOT · STYLES (MD3) — DERECHA */
+:root{
+  --chatbot-width: 380px;                 /* Desktop 360–420px */
+  --chatbot-ease: cubic-bezier(.2,.8,.2,1);
+  --chatbot-dur: 300ms;
+}
+
+/* Pestaña vertical (etiqueta) */
+.chatbot-tab{
+  position: fixed;
+  right: 0;                               /* ahora en el borde derecho */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10010;
+  writing-mode: vertical-lr;              /* invertimos escritura para derecha */
+  text-orientation: mixed;
+  padding: 12px 10px;
+  min-height: 44px;                       /* a11y touch */
+  min-width: 44px;                        /* a11y touch */
+  border: 0;
+  border-top-left-radius: 14px;           /* radios hacia la izquierda */
+  border-bottom-left-radius: 14px;
+  background: var(--md-sys-color-primary, #6750A4);
+  color: var(--md-sys-color-on-primary, #fff);
+  box-shadow: 0 6px 18px rgba(0,0,0,.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.chatbot-tab .chevron{
+  transition: transform var(--chatbot-dur) var(--chatbot-ease);
+  font-size: 20px;
+}
+.chatbot-tab[aria-expanded="true"] .chevron{
+  transform: rotate(90deg);              /* → cuando abierto */
+}
+
+/* Drawer lateral derecho */
+.chatbot-panel{
+  position: fixed;
+  inset: 0 0 0 auto;                      /* anclado a la derecha */
+  width: min(var(--chatbot-width), 92vw);
+  height: 100vh;
+  background: var(--md-sys-color-surface, #fff);
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+  border-left: 1px solid color-mix(in oklab, var(--md-sys-color-outline, #000), transparent 82%);
+  box-shadow: -12px 0 32px rgba(0,0,0,.14); /* sombra hacia la izquierda */
+  transform: translateX(8%);              /* oculto hacia la derecha */
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--chatbot-dur) var(--chatbot-ease),
+    opacity   var(--chatbot-dur) var(--chatbot-ease);
+  z-index: 10009;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.chatbot-panel.is-open{
+  transform: translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+.chatbot-head{
+  padding: 12px 16px;
+  border-bottom: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 82%);
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), transparent 0%);
+}
+.chatbot-title{ margin: 0; font: inherit; font-weight: 800; }
+
+/* Contenido scrollable */
+.chatbot-root{
+  overflow: auto;
+  padding: 12px 12px 16px 12px;
+}
+
+/* Backdrop sólo en mobile */
+.chatbot-backdrop{
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.34);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--chatbot-dur) var(--chatbot-ease);
+  z-index: 10008;
+}
+.chatbot-backdrop.is-open{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Desktop: ancho fijo */
+@media (min-width: 769px){
+  .chatbot-panel{ width: clamp(360px, var(--chatbot-width), 420px); }
+}
+
+/* Mobile: full width + modal */
+@media (max-width: 768px){
+  .chatbot-panel{ width: 100vw; }
+}
+
+/* Dark theme coherente */
+:root[data-theme="dark"] .chatbot-panel{
+  background: #1d1b20;
+  color: #ECE6F0;
+  border-left-color: rgba(255,255,255,.08);
+  box-shadow: -12px 0 44px rgba(0,0,0,.55);
+}
+:root[data-theme="dark"] .chatbot-head{
+  border-bottom-color: rgba(255,255,255,.10);
+  background: color-mix(in oklab, #1d1b20, transparent 0%);
+}
+
+/* Visually hidden helper */
+.visually-hidden{
+  position:absolute!important;
+  width:1px;height:1px;
+  padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);
+  white-space:nowrap;border:0;
+}
+/* END CHATBOT · STYLES (MD3) — DERECHA */
+
+/* BEGIN CHATBOT · UI POLISH */
+.chatbot-panel{
+  /* contraste y legibilidad */
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+  background: var(--md-sys-color-surface, #fff);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scrollbar-gutter: stable both-edges;
+}
+
+/* Contenedor principal del chat: scroll vertical suave, sin scroll horizontal */
+.chat-viewport{
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  padding: 12px;
+  /* controla el ancho máximo para líneas largas */
+  --chat-max: 720px;
+  display: flex;
+  justify-content: center; /* centra el contenido */
+}
+.chat-viewport > .chat-wrap{
+  width: min(var(--chat-max), 100%);
+}
+
+/* Tipografía base (MD3 ~14–16px) */
+.chatbot-panel, .chatbot-panel *{
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.45;
+}
+
+/* Burbujas */
+.chat-msg{
+  position: relative;
+  background: color-mix(in oklab, var(--md-sys-color-surface, #fff), var(--md-sys-color-primary, #6750A4) 6%);
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline, #000), transparent 85%);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+.chat-msg.assistant{
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 4%);
+}
+.chat-msg.user{
+  background: var(--md-sys-color-primary-container, #eaddff);
+  color: var(--md-sys-color-on-primary-container, #21005d);
+  margin-left: 48px;
+}
+.chat-msg.assistant{
+  margin-right: 48px;
+}
+
+/* Acciones por respuesta (debajo de cada mensaje) */
+.chat-actions{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 6px 0 14px 0;
+}
+.chat-actions md-outlined-button,
+.chat-actions md-filled-tonal-button{
+  --md-sys-typescale-label-large-size: 13px;
+}
+
+/* Elimina barras / scroll lateral en tarjetas internas legacy */
+.chatbot-panel .pred-card,
+.chatbot-panel .xai-card,
+.chatbot-panel .md3-card{
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Quitar botones fijos duplicados (footer legacy) si existen */
+.chatbot-panel .chat-actions-fixed,
+.chatbot-panel [data-global-actions],
+.chatbot-panel .sticky-actions { display: none !important; }
+
+/* Footer fijo (input de texto) */
+.chat-footer{
+  position: sticky;
+  bottom: 0;
+  left: 0; right: 0;
+  padding: 10px 12px;
+  border-top: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 82%);
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), transparent 0%);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+}
+
+/* Campo de entrada y botón enviar (si existen dentro del footer) */
+.chat-input{
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 82%);
+  background: var(--md-sys-color-surface, #fff);
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+}
+
+/* Indicador “escribiendo/stream” */
+.chat-typing{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  opacity: .9;
+  font-size: 13px;
+  color: color-mix(in oklab, var(--md-sys-color-on-surface,#1b1b1f), transparent 25%);
+  padding: 6px 10px;
+}
+.chat-typing .dot{
+  width: 6px; height: 6px; border-radius: 50%;
+  background: currentColor;
+  animation: bounce 1.2s infinite ease-in-out both;
+}
+.chat-typing .dot:nth-child(2){ animation-delay: .15s; }
+.chat-typing .dot:nth-child(3){ animation-delay: .30s; }
+@keyframes bounce{
+  0%,80%,100%{ transform: translateY(0); opacity:.4; }
+  40%{ transform: translateY(-4px); opacity:1; }
+}
+
+/* Dark mode */
+:root[data-theme="dark"] .chat-msg{
+  background: color-mix(in oklab, #1d1b20, #ffffff 6%);
+  color: #ECE6F0;
+  border-color: rgba(255,255,255,.08);
+}
+:root[data-theme="dark"] .chat-footer{
+  background: #1d1b20;
+  border-top-color: rgba(255,255,255,.08);
+}
+:root[data-theme="dark"] .chat-input{
+  background:#121016; color:#ECE6F0; border-color: rgba(255,255,255,.10);
+}
+/* END CHATBOT · UI POLISH */
+
+/* BEGIN CHATBOT · INPUT/BUTTON FIX */
+
+/* La vista deja espacio para que el footer no tape mensajes */
+.chat-viewport{ padding: 12px 12px 96px; }
+
+/* Caja del input: ancho completo de verdad */
+.input-wrap{
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 2%);
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 82%);
+  border-radius: 18px;
+  padding: 6px 12px;
+}
+
+/* Textarea “sin flechas”: sin barras, sin resize, auto-grow por JS */
+.chat-input{
+  flex: 1 1 auto;
+  min-width: 0;
+  display: block;
+  width: 100%;
+  resize: none;
+  border: 0; outline: 0;
+  background: transparent;
+  color: var(--md-sys-color-on-surface,#1b1b1f);
+  caret-color: var(--md-sys-color-on-surface,#1b1b1f);
+  font-size: 15.5px; line-height: 1.4;
+  padding: 6px 0;
+  max-height: 160px;
+  overflow: hidden;                 /* ← oculta scroll interno/“flechas” */
+  box-sizing: border-box;
+}
+.chat-input::placeholder{
+  color: color-mix(in oklab, var(--md-sys-color-on-surface,#1b1b1f), transparent 45%);
+}
+/* Oculta scrollbars del textarea en todos los engines */
+.chat-input::-webkit-scrollbar{ display:none; }
+.chat-input{ scrollbar-width: none; -ms-overflow-style: none; }
+
+/* Botón SUBMIT nativo, circular, con elevación MD3 */
+.chat-send-btn{
+  width: 44px; height: 44px;
+  min-width: 44px; min-height: 44px;
+  border: 0; border-radius: 50%;
+  display: inline-grid; place-items: center;
+  background: var(--md-sys-color-primary,#6750A4);
+  color: var(--md-sys-color-on-primary,#fff);
+  box-shadow: 0 4px 12px rgba(0,0,0,.18);
+  cursor: pointer;
+  transition: transform .06s ease, box-shadow .2s ease, opacity .2s ease;
+}
+.chat-send-btn:hover{ box-shadow: 0 6px 18px rgba(0,0,0,.22); }
+.chat-send-btn:active{ transform: translateY(1px) scale(.98); }
+.chat-send-btn:focus-visible{
+  outline: 2px solid color-mix(in oklab, var(--md-sys-color-primary,#6750A4), transparent 40%);
+  outline-offset: 2px;
+}
+.chat-send-btn md-icon{ font-size: 20px; }
+
+/* Modo oscuro coherente */
+:root[data-theme="dark"] .input-wrap{
+  background: color-mix(in oklab, #121016, #ffffff 4%);
+  border-color: rgba(255,255,255,.12);
+}
+:root[data-theme="dark"] .chat-input{ color: #ECE6F0; caret-color: #ECE6F0; }
+:root[data-theme="dark"] .chat-send-btn{
+  background: var(--md-sys-color-primary,#B89DF7);
+  color: var(--md-sys-color-on-primary,#1b1b1f);
+}
+/* END CHATBOT · INPUT/BUTTON FIX */
+
+/* BEGIN CHATBOT · Bigger send button + perfect align */
+:root{
+  /* Altura base de controles en el footer */
+  --chat-control-h: 52px;       /* prueba 52–56px en desktop */
+}
+
+/* La fila del footer centra verticalmente ambos elementos */
+.chat-form{
+  display: flex;
+  align-items: center;          /* centra el botón respecto al textarea */
+  gap: 12px;
+}
+
+/* La “caja” del input toma la misma altura del botón */
+.input-wrap{
+  min-height: var(--chat-control-h);
+  padding: 8px 14px;            /* ajusta acolchado acorde al nuevo alto */
+  border-radius: 20px;          /* un poco más redondeado para la nueva altura */
+}
+
+/* Textarea: altura auto (JS), pero con padding consistente */
+.chat-input{
+  padding: 10px 0;
+  line-height: 1.45;
+}
+
+/* Botón MD3 más grande y centrado */
+#chat-send-btn{
+  width: var(--chat-control-h);
+  height: var(--chat-control-h);
+  min-width: var(--chat-control-h);
+  min-height: var(--chat-control-h);
+  border-radius: 50%;
+  display: inline-grid;
+  place-items: center;          /* centra el ícono dentro del círculo */
+}
+#chat-send-btn md-icon{ font-size: 24px; } /* icono un toque más grande */
+
+/* Desktop: un poco más grande si quieres */
+@media (min-width: 768px){
+  :root{ --chat-control-h: 56px; }
+}
+
+/* Dark coherente (si ya lo tenías, no hace falta tocar) */
+/* END CHATBOT · Bigger send button + perfect align */
+/* BEGIN CHATBOT · DISCLAIMER POLISH (small, centered, MD3-like) */
+.chat-disclaimer{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px 14px;                 /* debajo del footer */
+  text-align: center;
+  font-size: 12px;                        /* letras pequeñas */
+  line-height: 1.35;
+  letter-spacing: .1px;
+  color: color-mix(in oklab, var(--md-sys-color-on-surface,#1b1b1f), transparent 42%);
+  user-select: none;
+}
+
+/* Icono “info” con Material Symbols (sin cambiar HTML) */
+.chat-disclaimer::before{
+  content: "info";
+  font-family: "Material Symbols Rounded"; /* requiere el <link> que ya agregamos */
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+  font-size: 18px;
+  line-height: 1;
+  opacity: .9;
+}
+
+/* Línea sutil separadora arriba del aviso (opcional, queda fino) */
+.chat-disclaimer{
+  border-top: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 86%);
+}
+
+/* Dark mode coherente */
+:root[data-theme="dark"] .chat-disclaimer{
+  color: color-mix(in oklab, #ECE6F0, transparent 50%);
+  border-top-color: rgba(255,255,255,.10);
+}
+/* END CHATBOT · DISCLAIMER POLISH */
+
+/* BEGIN CHATBOT · NO H-SCROLL + HOMOGENEOUS STREAM */
+
+/* Nada de scroll horizontal en el viewport del chat */
+.chat-viewport{ overflow-x: hidden; }
+
+/* El contenedor de mensajes nunca se pasa del ancho y hace wrap */
+.chat-wrap, .chat-log, .chat-msg{ max-width: 100%; box-sizing: border-box; }
+.chat-msg{
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* Cualquier tarjeta o bloque legacy dentro del chat respeta el 100% */
+.chat-log .md3-card,
+.chat-log .pred-card,
+.chat-log .xai-card,
+.chat-log article,
+.chat-log section{
+  max-width: 100%;
+  overflow: hidden;              /* evita que algo interno empuje el ancho */
+  box-sizing: border-box;
+}
+
+/* Imágenes y medios nunca desbordan */
+.chat-log img,
+.chat-log video,
+.chat-log canvas,
+.chat-log svg{ max-width: 100%; height: auto; display: block; }
+
+/* Code/pre y tablas: que rompa línea y ajuste al ancho */
+.chat-log pre, .chat-log code{
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.chat-log table{
+  width: 100%;
+  table-layout: fixed;           /* fuerza ajuste de celdas */
+  word-break: break-word;
+}
+
+/* Acciones y chips integrados bajo la respuesta, sin overflow */
+.chat-actions, #chat-quick, #findings-bar{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 8px 0 2px;
+  max-width: 100%;
+}
+#findings-bar > *, #chat-quick > *{ max-width: 100%; }
+
+/* “Procesando…” como una mini burbuja homogénea */
+#chat-typing{
+  margin: 8px 0 4px;
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 6%);
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 85%);
+  border-radius: 12px;
+  padding: 6px 10px;
+}
+
+/* END CHATBOT · NO H-SCROLL + HOMOGENEOUS STREAM */
+
+/* BEGIN CHAT · PROCESSING INDICATOR styles */
+.chat-typing{
+  display: block;
+  margin: 8px 0 4px;
+  text-align: left;            /* queda alineado con la burbuja */
+}
+.processing-btn{
+  pointer-events: none;        /* no clickeable */
+  --md-sys-typescale-label-large-size: 13px;
+}
+
+/* Fallback si no hay md-circular-progress (3 puntitos animados) */
+.processing-btn::before{
+  content: "";
+  display: inline-block;
+  width: 14px; height: 14px;
+  margin-right: 8px;
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 0 currentColor,
+    6px 0 0 0 currentColor,
+    12px 0 0 0 currentColor;
+  animation: dots 1.2s infinite ease-in-out;
+  opacity: .75;
+}
+.processing-btn md-circular-progress{ margin-right: 6px; }
+@keyframes dots{
+  0%, 80%, 100% { box-shadow:
+    0 0 0 0 currentColor,
+    6px 0 0 0 currentColor,
+    12px 0 0 0 currentColor; }
+  40% { box-shadow:
+    0 -4px 0 0 currentColor,
+    6px 0 0 0 currentColor,
+    12px -4px 0 0 currentColor; }
+}
+/* END CHAT · PROCESSING INDICATOR styles */
+
+/* BEGIN CHAT · PROCESSING INDICATOR — pretty pill */
+#chat-typing{
+  margin: 8px 0 4px;
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.typing-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 6%);
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 85%);
+}
+
+/* Tamaño del spinner MD3 */
+.typing-pill md-circular-progress{
+  width: 16px; height: 16px;
+}
+
+/* Fallback: ring CSS (se oculta si el componente existe y se ha “upgraded”) */
+.typing-pill .ring{
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: spin .8s linear infinite;
+  opacity: .85;
+}
+@keyframes spin{ to { transform: rotate(360deg); } }
+
+/* Si el componente ya está definido y “pinta”, oculta el ring CSS */
+.typing-pill:has(md-circular-progress){ position: relative; }
+.typing-pill:has(md-circular-progress) .ring{ display: none; }
+
+/* Dark mode */
+:root[data-theme="dark"] .typing-pill{
+  background: color-mix(in oklab, #1d1b20, #ffffff 6%);
+  color: #ECE6F0;
+  border-color: rgba(255,255,255,.10);
+}
+/* END CHAT · PROCESSING INDICATOR — pretty pill */
+
+#chat-typing[hidden]{ display:none!important; }
+
+/* BEGIN CHATBOT · LEGIBILITY HOTFIX (mapea .msg → .chat-msg) */
+
+/* El viewport jamás scrollea en X y centra el contenido */
+.chat-viewport{ overflow-x: hidden; }
+.chat-viewport > .chat-wrap{ width: min(720px, 100%); margin: 0 auto; }
+
+/* Aplica estilos de burbuja tanto a .chat-msg como a .msg del legacy */
+#chatbot-panel .chat-msg,
+#chatbot-panel #chat-log .msg{
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 6%);
+  color: var(--md-sys-color-on-surface,#1b1b1f);
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 85%);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Variantes de rol */
+#chatbot-panel .chat-msg.user,
+#chatbot-panel #chat-log .msg.user{
+  background: var(--md-sys-color-primary-container, #eaddff);
+  color: var(--md-sys-color-on-primary-container, #21005d);
+  margin-left: 48px;
+}
+#chatbot-panel .chat-msg.assistant,
+#chatbot-panel #chat-log .msg.assistant{
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 4%);
+  margin-right: 48px;
+}
+
+/* El contenedor del log no debe crecer más que el wrap ni provocar scroll lateral */
+#chatbot-panel #chat-log{
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Imágenes, tablas y pre no rompen el ancho */
+#chatbot-panel #chat-log img,
+#chatbot-panel #chat-log video,
+#chatbot-panel #chat-log canvas,
+#chatbot-panel #chat-log svg{ max-width: 100%; height: auto; display: block; }
+#chatbot-panel #chat-log pre, 
+#chatbot-panel #chat-log code{ white-space: pre-wrap; word-break: break-word; }
+#chatbot-panel #chat-log table{ width:100%; table-layout: fixed; word-break: break-word; }
+
+/* Dark mode */
+:root[data-theme="dark"] #chatbot-panel .chat-msg,
+:root[data-theme="dark"] #chatbot-panel #chat-log .msg{
+  background: color-mix(in oklab, #1d1b20, #ffffff 6%);
+  color: #ECE6F0;
+  border-color: rgba(255,255,255,.10);
+}
+/* END CHATBOT · LEGIBILITY HOTFIX */
+
+/* BEGIN CHAT · CARD + ACTIONS POLISH */
+
+/* Asegura que la tarjeta estructurada se vea como burbuja */
+#chatbot-panel #chat-log .xai-card.chat-msg.assistant{
+  background: color-mix(in oklab, var(--md-sys-color-surface,#fff), var(--md-sys-color-primary,#6750A4) 4%);
+  color: var(--md-sys-color-on-surface,#1b1b1f);
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 85%);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 10px 0;
+}
+:root[data-theme="dark"] #chatbot-panel #chat-log .xai-card.chat-msg.assistant{
+  background: color-mix(in oklab, #1d1b20, #ffffff 6%);
+  color: #ECE6F0;
+  border-color: rgba(255,255,255,.10);
+}
+
+/* Titulares dentro de la tarjeta con buen contraste */
+#chatbot-panel #chat-log .xai-card b{ opacity: 1; }
+
+/* Acciones/sugerencias compactas debajo de la respuesta */
+#chatbot-panel #chat-log .chat-actions{
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 8px 0 2px;
+}
+#chatbot-panel #chat-log .chat-actions .suggestion-chip,
+#chatbot-panel #chat-log .chat-actions .finding-chip,
+#chatbot-panel #chat-log .chat-actions button{
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 80%);
+  background: var(--md-sys-color-surface,#fff);
+  color: var(--md-sys-color-on-surface,#1b1b1f);
+  font-size: 13px;
+}
+:root[data-theme="dark"] #chatbot-panel #chat-log .chat-actions .suggestion-chip,
+:root[data-theme="dark"] #chatbot-panel #chat-log .chat-actions .finding-chip,
+:root[data-theme="dark"] #chatbot-panel #chat-log .chat-actions button{
+  background: #141218; color: #ECE6F0; border-color: rgba(255,255,255,.12);
+}
+
+/* END CHAT · CARD + ACTIONS POLISH */
+
+/* BEGIN CHATBOT · WIDTH NORMALIZATION (columna centrada) */
+
+/* Ancho máximo de la columna de contenido del chat */
+:root { --chat-bubble-max: 680px; } /* ajusta 600–720px a gusto */
+
+/* El log se convierte en una grilla: [1fr | columna-centro | 1fr] */
+#chatbot-panel #chat-log{
+  display: grid;
+  grid-template-columns: 1fr min(var(--chat-bubble-max), calc(100% - 24px)) 1fr;
+  justify-items: stretch;
+  gap: 0;
+  padding-inline: 12px;         /* respira en bordes */
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+/* Todo hijo del log cae en la columna central y ocupa TODO el ancho */
+#chatbot-panel #chat-log > *{
+  grid-column: 2;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Burbujas (user/assistant) sin márgenes laterales diferentes */
+#chatbot-panel .chat-msg,
+#chatbot-panel #chat-log .msg{
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Tarjeta estructurada con el mismo ancho que las burbujas */
+#chatbot-panel #chat-log .xai-card.chat-msg.assistant{
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Acciones y “procesando…” dentro de la misma columna (auto-anchura) */
+#chatbot-panel #chat-log .chat-actions,
+#chatbot-panel #chat-typing{
+  width: auto;                  /* no forzar 100% si prefieres chips compactos */
+  justify-self: start;          /* alineadas a la izquierda dentro de la columna */
+}
+
+/* Medios y bloques no rompen el ancho */
+#chatbot-panel #chat-log img,
+#chatbot-panel #chat-log video,
+#chatbot-panel #chat-log canvas,
+#chatbot-panel #chat-log svg{ max-width: 100%; height: auto; display: block; }
+#chatbot-panel #chat-log pre, 
+#chatbot-panel #chat-log code{ white-space: pre-wrap; word-break: break-word; }
+
+/* END CHATBOT · WIDTH NORMALIZATION */
+
+/* === CORE · XAI — Trío Original · Inferida · Heatmap (versión definitiva) === */
+
+/* La fila donde están las 3 columnas */
+.xai-grid-3{
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+  margin-top: 12px;
+}
+
+/* Cada columna marcada por JS */
+.xai-cell{ 
+  width: 100%; 
+  min-width: 0; 
+  max-width: 100%; 
+  box-sizing: border-box; 
+}
+
+/* Colocación explícita por clase para evitar saltos de orden */
+.xai-cell--orig  { grid-column: 1; }
+.xai-cell--infer { grid-column: 2; }
+.xai-cell--xai   { grid-column: 3; }
+
+/* Homogeneiza el card del heatmap con los otros .thumb existentes */
+#xai-col .thumb{
+  padding: 14px;
+  border-radius: var(--radius-lg, 16px);
+  /* ❌ quitado el outline para eliminar el contorno */
+  background: #fff;
+  display: grid;
+  grid-template-rows: auto 1fr; /* título + imagen */
+  gap: 6px;
+}
+
+/* Título consistente y alineado a la izquierda */
+#xai-col .thumb h4{
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: left; /* ← ahora alineado a la izquierda */
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+}
+
+/* Las 3 imágenes comparten EXACTAMENTE la misma altura (desde JS) */
+.xai-grid-3 .thumb img,
+.xai-grid-3 img#img-original,
+.xai-grid-3 img#img-infer,
+.xai-grid-3 img#xai-img{
+  width: 100%;
+  height: var(--xai-h, 360px);
+  object-fit: contain;
+  border-radius: 14px;
+  background: #fff;
+  display: block;
+}
+
+/* Evitar que wrappers internos limiten el ancho dentro del grid */
+.xai-grid-3 figure,
+.xai-grid-3 .card,
+.xai-grid-3 .tile,
+.xai-grid-3 .panel,
+.xai-grid-3 .item,
+.xai-grid-3 div{
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.xai-grid-3 figure{ margin: 0; }
+
+/* Responsivo: apilar en móviles */
+@media (max-width: 900px){
+  .xai-grid-3{ grid-template-columns: 1fr; }
+}
+
+/* === XAI: que el heatmap se vea EXACTAMENTE como los otros .thumb === */
+#xai-col .thumb{
+  /* usa el estilo base de .thumb (sin tarjeta blanca) */
+  padding: 14px;
+  border-radius: var(--radius-lg, 16px);
+  background: transparent;      /* antes: #fff */
+  outline: none;
+  box-shadow: none;
+  display: block;                /* no grid */
+  gap: 0;                        /* por si quedó configurado */
+}
+
+#xai-col .thumb h4{
+  margin: 0 0 6px 0;
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: left;              /* títulos a la izquierda */
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+}
+
+/* imagen con el mismo look que las demás */
+#xai-col .thumb img{
+  width: 100%;
+  height: 360px;                 /* coincide con .thumb img */
+  object-fit: contain;
+  border-radius: 14px;
+  display: block;
+  /* no tocar background para que en dark use tu regla global */
+}
+
+/* === Aumentar tamaño de las imágenes en el trío XAI === */
+.xai-grid-3 .thumb img,
+.xai-grid-3 img#img-original,
+.xai-grid-3 img#img-infer,
+.xai-grid-3 img#xai-img{
+  height: 680px;
+}

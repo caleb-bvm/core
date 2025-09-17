@@ -65,8 +65,10 @@ def extract_struct(text):
 # --- Sugerencias próximas (baratas) ---
 DEFAULT_SUGGESTIONS = [
     "Justifica la categoría BI-RADS",
-    "¿Qué estudios complementarios recomendarías?",
-    "Resume en 5 viñetas para el reporte"
+    "¿Qué otros estudios sugerirías?",
+    "Resume en 5 viñetas para el reporte",
+    "Explicar Hallazgos",
+    "Da un breve diagnóstico diferencial",
 ]
 
 
