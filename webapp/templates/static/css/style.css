@@ -101,6 +101,14 @@ body.m3-body{
 .hero-cta.split{ align-items:center; }
 .hero-card{ width:100%; min-height:420px; display:grid; place-items:center; overflow:hidden; border-radius:var(--radius-lg); }
 .hero-card img{ width:100%; height:100%; object-fit:cover; transform:scale(1.02); }
+.hero-card img{
+  width: 100%;
+  max-width: 500px; /* controla el tamaño máximo */
+  height: auto;
+  object-fit: contain;
+  transform: none;
+}
+
 
 /* Section header card */
 .section-head-card{ margin-bottom:calc(var(--gap) + 4px); padding:14px 16px; border-radius:var(--radius-lg); }
@@ -792,7 +800,7 @@ a:hover{ background:var(--hover); border-radius:8px; }
     --surface-variant:#241C27;         /* bloques alternos */
     --outline:#4B3845;
 
-    --text:#ECE6F0;
+    --text:#474747;
     --text-muted:#BBA6B4;
 
     /* Sombras un poco más sutiles en dark */
@@ -2149,4 +2157,16 @@ background-size: auto, auto, 40px 40px;
 .xai-grid-3 img#img-infer,
 .xai-grid-3 img#xai-img{
   height: 680px;
+}
+
+
+:root{ --chat-w: 380px; } /* ← cambia 380px si lo necesitas */
+
+@media (min-width:1024px){
+  /* El panel usa ese mismo ancho fijo */
+  #chat-panel{ width: var(--chat-w) !important; }
+
+  /* Empuja el contenido y la appbar a la izquierda: cero solapes */
+  .with-rail{ margin-right: var(--chat-w) !important; }
+  .appbar   { margin-right: var(--chat-w) !important; }
 }

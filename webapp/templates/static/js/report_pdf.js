@@ -215,34 +215,41 @@ async function strongResolveLogoDataURL() {
   }
 
   function extractChatInsights() {
-    const panel = $('#chatbot-panel');
-    const chatLog = panel ? panel.querySelector('#chat-log') : null;
-    const chatQuick = panel ? panel.querySelector('#chat-quick') : null;
-    const findingsBar = $('#findings-bar');
+  const panel = $('#chatbot-panel');
+  const chatLog = panel ? panel.querySelector('#chat-log') : null;
+  const findingsBar = $('#findings-bar');
 
-    let lastAssistant = '';
-    if (chatLog) {
-      const candidates = chatLog.querySelectorAll('.msg.assistant, .assistant, [data-role="assistant"], .bot');
-      const last = candidates[candidates.length - 1];
-      lastAssistant = last ? last.textContent.trim() : '';
+  let lastAssistant = '';
+  if (chatLog) {
+    const candidates = chatLog.querySelectorAll('.msg.assistant, .assistant, [data-role="assistant"], .bot');
+    const last = candidates[candidates.length - 1];
+    if (last) {
+      // Clonamos el nodo para limpiar botones interactivos
+      const clone = last.cloneNode(true);
+      clone.querySelectorAll('button, .quick-btn, .action-chip').forEach(el => el.remove());
+      lastAssistant = clone.textContent.trim();
     }
-    const quick = chatQuick ? Array.from(chatQuick.querySelectorAll('button')).map((b) => b.textContent.trim()).filter(Boolean) : [];
-    const chips = findingsBar ? Array.from(findingsBar.querySelectorAll('.finding-chip.selected')).map((c) => c.textContent.trim()) : [];
-
-    const recs = [];
-    if (lastAssistant) {
-      for (const line of lastAssistant.split('\n')) {
-        const t = line.trim();
-        if (/^[-•●]/.test(t) || /recom/i.test(t)) recs.push(t.replace(/^[-•●]\s*/, ''));
-      }
-    }
-    return {
-      summary: lastAssistant ? lastAssistant.slice(0, 500) : '',
-      quickActions: quick.slice(0, 6),
-      selectedFindings: chips.slice(0, 8),
-      recommendationsFromChat: recs.slice(0, 6),
-    };
   }
+
+  const chips = findingsBar
+    ? Array.from(findingsBar.querySelectorAll('.finding-chip.selected')).map((c) => c.textContent.trim())
+    : [];
+
+  const recs = [];
+  if (lastAssistant) {
+    for (const line of lastAssistant.split('\n')) {
+      const t = line.trim();
+      if (/^[-•●]/.test(t) || /recom/i.test(t)) recs.push(t.replace(/^[-•●]\s*/, ''));
+    }
+  }
+
+  return {
+    summary: lastAssistant ? lastAssistant.slice(0, 500) : '',
+    quickActions: [], // 👈 se fuerza vacío para NO incluir botones
+    selectedFindings: chips.slice(0, 8),
+    recommendationsFromChat: recs.slice(0, 6),
+  };
+}
 
   // ---------- Build data ----------
   async function buildReportDataFromUI(includeChat = false) {

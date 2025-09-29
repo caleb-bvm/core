@@ -21,6 +21,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 
+  
+
   <!-- Styles -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}">
   <link rel="stylesheet" href="{{ url_for('static',  filename='css/style_rail_fix.css') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}">
@@ -73,7 +75,6 @@
   </style>
 
   <style>
-  /* === Chat clínico (panel + chips) === */
   #chat-fab{
     position: fixed; right: 20px; bottom: 20px; z-index: 9999;
     border-radius: 9999px; padding: 10px 14px;
@@ -81,10 +82,15 @@
     box-shadow: 0 8px 20px rgba(0,0,0,.18); cursor: pointer; font-weight: 600;
   }
   #chat-panel{
-    position: fixed; top: 0; right: 0; height: 100vh; width: 380px; max-width: 90vw;
-    background: var(--surface, #fff); border-left: 1px solid rgba(0,0,0,.08);
-    display: none; flex-direction: column; z-index: 9998;
-    box-shadow: -8px 0 24px rgba(0,0,0,.08);
+    width: clamp(280px, 28vw, 420px);
+    max-width: 90vw;
+    right: 0; top: 0; height: 100dvh;
+    position: fixed;
+    background: var(--surface, #fff);
+    border-left: 1px solid rgba(0,0,0,.08);
+    box-shadow: -12px 0 32px rgba(0,0,0,.14);
+    z-index: 10009;
+    display: none; flex-direction: column;
     font-family: inherit;
   }
   #chat-panel.open{ display:flex; }
@@ -103,13 +109,21 @@
   .xai-card .row{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:.5rem; }
   .disclaimer{ font-size:.8rem; opacity:.7; margin:8px 14px 14px; }
 
-  /* Chips de hallazgos (barra) */
   #findings-bar{ display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
   .finding-chip{
     border:1px solid rgba(0,0,0,.15); border-radius:999px; padding:.35rem .7rem;
     background:#fff; cursor:pointer;
   }
   .finding-chip.selected{ outline:2px solid #4f46e5; background:#eef2ff; }
+  @media (min-width: 1024px){
+  html:has(#chat-panel.open) .with-rail{
+    /* reserva exactamente el ancho del chat */
+    padding-right: calc(clamp(280px, 28vw, 420px) + 16px);
+  }
+  html:has(#chat-panel.open) .appbar{
+    margin-right: clamp(280px, 28vw, 420px);
+  }
+}
 </style>
 
 <style>
@@ -140,9 +154,7 @@
     <md-icon class="material-symbols-rounded">home</md-icon><span>Home</span>
   </a>
 
-  <a class="nav-item" href="#dashboard">
-    <md-icon class="material-symbols-rounded">insights</md-icon><span>Indicadores</span>
-  </a>
+
 
   <a class="nav-item" href="#funcionamiento">
     <md-icon class="material-symbols-rounded">code</md-icon><span>Uso</span>
@@ -206,58 +218,18 @@
       <div class="hero-grid">
         <md-elevated-card class="hero-copy-card" data-reveal>
           <div class="hero-copy">
-            <h1 class="display">Detección temprana, explicable y rápida</h1>
-            <p class="body">Analizamos mamografías con modelos de última generación (Faster R-CNN/Detectron2), generando visualizaciones claras que apoyan el diagnóstico.</p>
+            <h1 class="display">CORE • Detección temprana, explicable y rápida</h1>
+            <p class="body">CORE analiza mamografías con modelos de última generación (Faster R-CNN/Detectron2), generando visualizaciones claras que apoyan el diagnóstico.</p>
           </div>
         </md-elevated-card>
 
         <md-elevated-card class="hero-card" data-reveal>
-          <img src="static/assets/logo.svg" alt="Visualización del modelo" />
+          <img src="static/assets/cb_69.jpg" alt="Visualización del modelo" />
         </md-elevated-card>
       </div>
     </section>
 
-    <!-- DASHBOARD (tarjetas con el mismo estilo de “hint-card”) -->
-    <section id="dashboard" class="section container">
-      <md-filled-tonal-card class="section-head-card" data-reveal>
-        <div class="section-head">
-          <h2 class="title">Indicadores clave</h2>
-          <p class="body">Tendencias de adopción, confianza y uso de IA en salud (datos demo).</p>
-        </div>
-      </md-filled-tonal-card>
-    <!-- Indicadores clave -->
-    <div class="section-grid">
-        <md-outlined-card class="micro-card span-4" data-reveal>
-            <div class="micro-head">
-                <h3 class="micro-title">Aceptación IA en salud (LatAm)</h3>
-            </div>
-            <canvas id="chart1" height="200"></canvas>
-        </md-outlined-card>
-
-        <md-outlined-card class="micro-card span-4" data-reveal>
-            <div class="micro-head">
-                <h3 class="micro-title">Inversión IA médica</h3>
-            </div>
-            <canvas id="chart2" height="200"></canvas>
-        </md-outlined-card>
-
-        <md-outlined-card class="micro-card span-4" data-reveal>
-            <div class="micro-head">
-                <h3 class="micro-title">Adopción sector sanitario</h3>
-            </div>
-            <canvas id="chart3" height="200"></canvas>
-        </md-outlined-card>
-
-        <!-- Ahora ocupa todo el ancho -->
-        <!-- Influencia en decisiones (10 años): ocupa todo el ancho -->
-        <md-outlined-card class="micro-card span-12" data-reveal>
-            <div class="micro-head">
-                <h3 class="micro-title">Influencia en decisiones (10 años)</h3>
-            </div>
-            <canvas id="chart4" height="200"></canvas>
-        </md-outlined-card>
-    </div>
-    </section>
+    
 
    <!-- CÓMO FUNCIONA -->
 <section id="funcionamiento" class="section container">
@@ -875,8 +847,6 @@
 <div id="chatbot-backdrop" class="chatbot-backdrop" hidden></div>
 <!-- END CHATBOT · TAB + DRAWER (MD3 · RIGHT · LEGACY-INTEGRATED) -->
 
-<button id="btn-open-report" style="position:fixed;left:20px;bottom:20px;z-index:9999">Ver reporte</button>
-
 </body>
 
 
@@ -1007,4 +977,23 @@
 
     // Tema
   </script>
+  <script>
+(() => {
+  const html = document.documentElement;
+  const panel = document.getElementById('chat-panel');
+  if (!panel) return;
+  const apply = () => {
+    const open = panel.classList.contains('open');
+    html.classList.toggle('chat-open', open);
+    const w = open ? panel.getBoundingClientRect().width : 0;
+    html.style.setProperty('--chat-w', w + 'px');
+  };
+  new MutationObserver(apply).observe(panel, {attributes:true, attributeFilter:['class']});
+  window.addEventListener('resize', apply);
+  apply();
+})();
+</script>
+<script defer src="{{ url_for('static', filename='js/chat_rail_fix.js') }}{% if BUILD_ID %}?v={{ BUILD_ID }}{% endif %}"></script>
+
+
 </html>
