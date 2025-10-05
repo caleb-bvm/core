@@ -171,9 +171,3 @@ No debe emplearse en diagnósticos médicos reales sin la validación previa de 
 
 > *“Tecnología que salva vidas. IA que inspira confianza.”*
 
-```
-
----
-
-¿Querés que te lo prepare también con **badges y enlaces clicables** (por ejemplo: GPU ✔, Python 🐍, Flask 🔥, PyTorch 🔥) y un diseño visual más llamativo estilo “proyecto open source profesional”? Puedo dejarlo listo para subirlo directo a GitHub.
-```
