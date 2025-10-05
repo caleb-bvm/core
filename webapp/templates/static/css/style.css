@@ -2170,3 +2170,142 @@ background-size: auto, auto, 40px 40px;
   .with-rail{ margin-right: var(--chat-w) !important; }
   .appbar   { margin-right: var(--chat-w) !important; }
 }
+
+/* === ODS → MISMO ESTILO QUE FAQ BIG === */
+
+/* Igual que .faq-card-big */
+#ods .how-card{
+  padding: 0;
+  border-radius: 28px;
+  overflow: hidden;                 /* recorta radios como FAQ */
+  background: var(--surface, #fff);
+  outline: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 84%);
+  box-shadow: 0 8px 26px rgba(0,0,0,.06);
+}
+:root[data-theme="dark"] #ods .how-card{
+  background: #1d1b20;
+  outline-color: rgba(255,255,255,.08);
+  box-shadow: 0 14px 40px rgba(0,0,0,.45);
+}
+
+/* Layout interno FAQ: media arriba, texto abajo */
+#ods .how-card.hsplit .tile{
+  display: grid;
+  grid-template-rows: auto 1fr;
+  background: transparent;          /* pinta el host */
+}
+
+/* Header tipo FAQ (fondo tonal + divisor inferior) */
+#ods .tile-media{
+  display:flex; align-items:center; justify-content:center;
+  padding: 32px 24px;
+  background: color-mix(in oklab, var(--surface,#fff), var(--md-sys-color-primary,#6750A4) 6%);
+  border-bottom: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 82%);
+}
+:root[data-theme="dark"] #ods .tile-media{
+  background: color-mix(in oklab, #1d1b20, var(--md-sys-color-primary,#9a82db) 9%);
+  border-bottom-color: rgba(255,255,255,.10);
+}
+
+/* Imagen ODS arriba (sin filtros heredados de how-card) */
+#ods .tile-media img{
+  width: clamp(96px, 12vw, 144px);
+  height: clamp(96px, 12vw, 144px);
+  object-fit: contain;
+  border-radius: 16px;
+  filter: none !important;          /* evita brightness(0)/invert */
+  background: transparent !important;
+}
+
+/* Cuerpo de texto como FAQ */
+#ods .tile-text{
+  padding: 24px 20px;
+  background: transparent;          /* host ya define fondo */
+}
+
+/* Tipografía igual a FAQ */
+#ods .how-title{
+  margin: 0 0 6px;
+  font-weight: 800;
+  font-size: clamp(18px, 2vw, 22px);
+}
+#ods .how-text{ margin: 0; opacity: .92; }
+
+/* Hover igual de sutil que FAQ */
+#ods .how-card:hover{
+  box-shadow: 0 12px 34px rgba(0,0,0,.10);
+}
+:root[data-theme="dark"] #ods .how-card:hover{
+  box-shadow: 0 18px 46px rgba(0,0,0,.55);
+}
+
+/* MUY IMPORTANTE: limita el modo “icono negro/blanco” SOLO a SVGs */
+.how-card.hsplit .tile-media img[src$=".svg"] { filter: brightness(0); }
+:root[data-theme="dark"] .how-card.hsplit .tile-media img[src$=".svg"] { 
+  filter: invert(1) brightness(1.2);
+}
+
+/* === ODS · Colores CLAROS (tonales MD3) === */
+/* Aplica solo cuando NO está el tema oscuro activo */
+:root:not([data-theme="dark"]) {
+  --ods-surface: var(--md-sys-color-surface, #fff);
+  --ods-outline: color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 84%);
+  --ods-accent:  var(--md-sys-color-primary, #6750A4);
+}
+
+/* Card igual a FAQ pero con surface clara + outline suave */
+:root:not([data-theme="dark"]) #ods .how-card{
+  background: var(--ods-surface);
+  outline-color: var(--ods-outline);
+  box-shadow: 0 8px 26px rgba(0,0,0,.06);
+}
+
+/* Header (imagen arriba) con tono claro y divisor */
+:root:not([data-theme="dark"]) #ods .tile-media{
+  background: color-mix(in oklab, var(--ods-surface), var(--ods-accent) 8%); /* ↑ un toque más de color */
+  border-bottom: 1px solid color-mix(in oklab, var(--md-sys-color-outline,#000), transparent 82%);
+}
+
+/* Cuerpo (texto) sin “papel blanco”; deja respirar el tono del host */
+:root:not([data-theme="dark"]) #ods .tile-text{
+  background: transparent; /* el host .how-card ya es la superficie */
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+}
+
+/* Títulos y párrafos con contraste claro */
+:root:not([data-theme="dark"]) #ods .how-title{
+  color: var(--md-sys-color-on-surface, #1b1b1f);
+}
+:root:not([data-theme="dark"]) #ods .how-text{
+  color: color-mix(in oklab, var(--md-sys-color-on-surface,#1b1b1f), transparent 8%);
+  opacity: 1; /* mejor que usar opacity para no “lavar” los links */
+}
+
+/* Hover sutil en claro: un poco más de elevación */
+:root:not([data-theme="dark"]) #ods .how-card:hover{
+  box-shadow: 0 12px 34px rgba(0,0,0,.10);
+}
+
+/* Imagen ODS (asegura que no se invierta en claro) */
+:root:not([data-theme="dark"]) #ods .tile-media img{
+  filter: none !important;
+}
+
+/* (Opcional) más color en el header al pasar el mouse */
+@media (hover:hover){
+  :root:not([data-theme="dark"]) #ods .how-card:hover .tile-media{
+    background: color-mix(in oklab, var(--ods-surface), var(--ods-accent) 10%);
+  }
+}
+/* === ODS · bajar un poco el bloque de texto === */
+:root{ --ods-text-top-pad: 10px; }  /* ajusta 6–16px a tu gusto */
+
+#ods .tile-text{
+  /* tu padding actual + un extra arriba */
+  padding-top: calc(24px + var(--ods-text-top-pad)) !important;
+}
+
+/* En móviles, un extra más pequeño para no “comerse” altura */
+@media (max-width: 680px){
+  :root{ --ods-text-top-pad: 6px; }
+}

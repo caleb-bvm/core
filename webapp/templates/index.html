@@ -173,10 +173,6 @@
     <md-icon class="material-symbols-rounded">memory</md-icon><span>Equipo Tec.</span>
   </a>
 
-  <a class="nav-item" href="#metricas">
-    <md-icon class="material-symbols-rounded">analytics</md-icon><span>Métricas</span>
-  </a>
-
   <a class="nav-item" href="#faq">
     <md-icon class="material-symbols-rounded">help</md-icon><span>FAQ</span>
   </a>
@@ -565,32 +561,7 @@
   </div>
 </section>
 
-<!-- MÉTRICAS DEL MODELO -->
-<section id="metricas" class="section container">
-  <md-filled-tonal-card class="section-head-card" data-reveal>
-    <div class="section-head">
-      <h2 class="title">Métricas del modelo</h2>
-      <p class="body">Rendimiento global (demo) y tiempos de respuesta.</p>
-    </div>
-  </md-filled-tonal-card>
 
-  <div class="section-grid">
-    <md-outlined-card class="micro-card span-4" data-reveal>
-      <div class="micro-head"><h3 class="micro-title">Precisión / Recall / mAP</h3></div>
-      <canvas id="chart-prmap" height="200"></canvas>
-    </md-outlined-card>
-
-    <md-outlined-card class="micro-card span-4" data-reveal>
-      <div class="micro-head"><h3 class="micro-title">Latencia de inferencia (ms)</h3></div>
-      <canvas id="chart-latency" height="200"></canvas>
-    </md-outlined-card>
-
-    <md-outlined-card class="micro-card span-4" data-reveal>
-      <div class="micro-head"><h3 class="micro-title">Distribución de confianza</h3></div>
-      <canvas id="chart-confidence" height="200"></canvas>
-    </md-outlined-card>
-  </div>
-</section>
 
 <!-- PRUEBA DE FUEGO -->
     <section id="prueba" class="section container">
@@ -669,6 +640,91 @@
     <div id="xai-items" class="grid gap-4"></div>
     <p class="caption">Apoyo visual; no sustituye el criterio clínico.</p>
   </div>
+
+
+<!-- ODS -->
+<section id="ods" class="section container">
+  <md-filled-tonal-card class="section-head-card" data-reveal>
+    <div class="section-head">
+      <h2 class="title">Nuestros Objetivos de Desarrollo Sostenible</h2>
+      <p class="body">
+        El proyecto CORE se alinea con los ODS de la ONU, contribuyendo al bienestar, la equidad y la innovación en salud.
+      </p>
+    </div>
+  </md-filled-tonal-card>
+
+  <div class="section-grid">
+
+    <!-- ODS 3 - Salud y bienestar -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/ods3.png') }}" 
+               alt="ODS 3 - Salud y bienestar" width="80" height="80" style="border-radius:12px;">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">ODS 3: Salud y bienestar</h3>
+          <p class="how-text">
+            CORE promueve la detección temprana del cáncer de mama, mejorando la atención médica y reduciendo la mortalidad.
+            Su objetivo es apoyar al personal médico y optimizar la precisión diagnóstica mediante inteligencia artificial.
+          </p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- ODS 5 - Igualdad de género -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/ods5.png') }}" 
+               alt="ODS 5 - Igualdad de género" width="80" height="80" style="border-radius:12px;">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">ODS 5: Igualdad de género</h3>
+          <p class="how-text">
+            Facilita el acceso a un diagnóstico oportuno y confiable para mujeres,
+            promoviendo la equidad en salud y el empoderamiento femenino mediante tecnología accesible e inclusiva.
+          </p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- ODS 9 - Industria, innovación e infraestructura -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/ods9.png') }}" 
+               alt="ODS 9 - Industria, innovación e infraestructura" width="80" height="80" style="border-radius:12px;">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">ODS 9: Industria, innovación e infraestructura</h3>
+          <p class="how-text">
+            Fomenta la aplicación de tecnologías avanzadas de inteligencia artificial en el ámbito médico,
+            fortaleciendo la infraestructura tecnológica nacional y demostrando innovación científica local.
+          </p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+    <!-- ODS 10 - Reducción de las desigualdades -->
+    <md-elevated-card class="how-card hsplit span-6" data-reveal>
+      <div class="tile">
+        <div class="tile-media">
+          <img src="{{ url_for('static', filename='assets/ods10.png') }}" 
+               alt="ODS 10 - Reducción de las desigualdades" width="80" height="80" style="border-radius:12px;">
+        </div>
+        <div class="tile-text">
+          <h3 class="how-title">ODS 10: Reducción de las desigualdades</h3>
+          <p class="how-text">
+            Busca democratizar el acceso a herramientas de diagnóstico de alta precisión,
+            especialmente en regiones con recursos limitados, contribuyendo a una atención médica más equitativa.
+          </p>
+        </div>
+      </div>
+    </md-elevated-card>
+
+  </div>
+</section>
 
 
 <!-- FAQ -->
@@ -878,7 +934,6 @@
       <a href="#prueba">Prueba de fuego</a>
       <a href="#testimonios">Testimonios</a>
       <a href="#equipo">Equipo & Tecnología</a>
-      <a href="#metricas">Métricas</a>
     </md-elevated-card>
 
     <md-elevated-card class="f-col">
