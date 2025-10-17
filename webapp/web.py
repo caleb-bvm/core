@@ -21,12 +21,8 @@ from torchvision.transforms.functional import to_tensor
 #Chatbot
 CHATBOT_URL = "http://127.0.0.1:33518/generate-response"
 
-# Tu predictor existente (NO lo tocamos para inferencia)
 from infer import Predictor
 
-# =========================
-# Rutas de plantillas/estáticos (tu estructura actual)
-# =========================
 BASE_DIR = Path(__file__).parent.resolve()
 TEMPLATES_DIR = BASE_DIR / "templates"
 STATIC_DIR = TEMPLATES_DIR / "static"
